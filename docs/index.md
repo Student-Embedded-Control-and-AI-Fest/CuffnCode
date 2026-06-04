@@ -1,249 +1,150 @@
 ---
-title: CuffnCode — Host Simulation (IFB 206)
+title: CuffnCode Host-Simulation — Dokumentasi Implementasi
 layout: default
 ---
 
 # CuffnCode — Host Simulation
 
-**Retrofitted Blood Pressure System** · dokumentasi mini project  
-**Mata kuliah:** IFB 206 — *Komputasi Paralel dan Sistem Terdistribusi*  
-**Institusi:** Institut Teknologi Nasional (ITENAS)  
-**Penilaian:** EVALUASI 3 · Semester Genap 2025/2026
+**IFB 206 Komputasi Paralel & Sistem Terdistribusi** · EVALUASI 3 · ITENAS 2025/2026  
+**Pelaksana implementasi:** Farhan Kamil Hermansyah (152024150)
 
-**Repositori:** [Farmil23/CuffnCode](https://github.com/Farmil23/CuffnCode)  
-**Program tim:** [`Host-Simulation/`](../tree/main/Host-Simulation)  
-**Hardware referensi:** [Student-Embedded-Control-and-AI-Fest/CuffnCode](https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode)  
-**Catatan desain:** [Obsidian Publish — CuffnCode](https://publish.obsidian.md/auralius/Published/CuffnCode)
+Dokumentasi ini menjelaskan **apa yang saya implementasikan** di fork [Farmil23/CuffnCode](https://github.com/Farmil23/CuffnCode) — bukan ringkasan README hardware upstream.
+
+> Versi HTML lengkap (disarankan untuk GitHub Pages): lihat [`index.html`](index.html) di folder yang sama.  
+> **GUI** (`python gui.py`) tidak berjalan di browser; rekam layar untuk video Instagram Lab.
 
 ---
 
-## Penting: GUI vs halaman web ini
+## 1. Kontribusi asli (bukan copy-paste upstream)
 
-| Media | Apa yang ditampilkan |
-|-------|----------------------|
-| **GitHub Pages** (situs ini) | Dokumentasi, arsitektur, tim, cara install |
-| **`python gui.py`** di laptop | Simulator interaktif Tkinter + grafik SEBELUM/SESUDAH |
-| **Video Instagram Lab** | Demo 20–30 detik untuk dosen (disarankan) |
+Repo [Student-Embedded-Control-and-AI-Fest/CuffnCode](https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode) berisi KiCad, TINA-TI, dan foto prototipe. **Folder `Host-Simulation/` saya tambahkan** untuk kuliah.
 
-GUI **tidak** berjalan di browser Pages — itu program desktop Python.
+| Modul | Yang saya tulis |
+|-------|-----------------|
+| `parallel_pipeline.py` | Benchmark sequential / `Pool.map` / dynamic `chunksize`, merge terindeks |
+| `distributed_nodes.py` | 3 `Process` + `Queue`, pesan `samples` / `features` / `eof` |
+| `filters.py` | MA + **IIR notch 50 Hz manual** (state biquad per sampel) |
+| `signal_generator.py` | Envelope oscillometric + carrier + **hum 50 Hz** + noise |
+| `signal_analysis.py` | FFT band-power hum, noise residu, panel PENGARUH GUI |
+| `cuffncode_specs.py` | Hitung gain AD620 & offset TLC dari nilai repo |
+| `hardware_sim.py` | State machine 11 fase + telemetri ADC |
+| `gui_app.py` | ~750 baris Tkinter + Matplotlib + threading |
+| `main.py` | Orkestrator dua benchmark terminal |
+
+**Referensi** (komponen, rumus): README/Obsidian CuffnCode. **Implementasi** (paralel, distributed, GUI): kode di atas.
 
 ---
 
-## Menjalankan program
+## 2. Keputusan desain
+
+### Studi kasus = notch hum di Host
+
+Roadmap CuffnCode: *50/60 Hz hum killer*. Saya letakkan di PC Host karena batch ADC panjang cocok untuk **data parallelism** dan pipeline **A→B→C**.
+
+### `multiprocessing` di Windows
+
+- Benchmark: `Pool.map` + catatan jujur jika speedup &lt; 1 (overhead spawn).
+- GUI: **tidak** memanggil `Pool` dari thread animasi — loop 8 chunk + `process_chunk` agar progress bar terlihat.
+
+### Notch tanpa scipy
+
+`notch_50hz` implementasi koefisien sendiri → CPU-bound per chunk, bisa di-port ke STM32.
+
+---
+
+## 3. Model sinyal (`signal_generator.py`)
+
+```text
+envelope = 80·exp(-0.35t)·(1-exp(-2.5t))   # deflate oscillometric
+carrier  = 0.15·sin(2π·1.2t)
+hum      = 3.0·sin(2π·50t)                 # PLN
+noise    = N(0, 0.8)
+fs = 200 Hz, seed=42 (reproduksibel)
+```
+
+---
+
+## 4. Komputasi paralel (`parallel_pipeline.py`)
+
+1. `split_signal` → 16 chunk (benchmark)  
+2. `process_chunk`: 12× (MA → notch) per chunk  
+3. Sequential vs `Pool(cpu_count()-1)` vs `chunksize=1`  
+4. `merge_chunks` sort by index  
+5. Verifikasi `peak_seq ≈ peak_par` → cetak `Peak match: OK`
+
+Worker mengembalikan `(idx, filtered, peak)` agar merge tidak salah urutan.
+
+---
+
+## 5. Sistem terdistribusi (`distributed_nodes.py`)
+
+| Node | Fungsi | Pesan |
+|------|--------|-------|
+| A | Stream 4 batch + delay 50 ms | `samples`, `eof` |
+| B | `in_q.get()` → MA + notch → list peak | `features`, `eof` |
+| C | `max(peaks)` → BP demo | print |
+
+Tiga **proses OS** terpisah — bukan thread — agar sesuai konsep message passing.
+
+---
+
+## 6. GUI (`gui_app.py`)
+
+- Diagram: cuff, pump, 2 solenoid, MPS20N0040D, AD620, TLC2272, STM32, Host, Node A/B/C  
+- `HardwareSimulator.active_blocks()` menyalakan blok per fase  
+- Animasi deflate + plot slice  
+- `compare_before_after()` → % penurunan hum/noise di panel hijau  
+- Thread ` _run_simulation` + `root.after` untuk thread-safety Tkinter  
+
+---
+
+## 7. Menjalankan
 
 ```bash
 git clone https://github.com/Farmil23/CuffnCode.git
 cd CuffnCode/Host-Simulation
 pip install -r requirements.txt
 python gui.py
-```
-
-Benchmark terminal (paralel + distributed):
-
-```bash
 python main.py
 ```
 
----
-
-## 1. Latar belakang
-
-**CuffnCode** ([IFAC Activity Fund](https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode)) adalah sistem pengukuran tekanan darah retrofit untuk pengajaran dan riset. Rantai sinyal: sensor bridge → analog front end → ADC mikrokontroler → (opsional) Host PC untuk filter dan analisis.
-
-Pada **EVALUASI 3 Komputasi Paralel**, tim fokus pada **lapisan Host**:
-
-- Bagaimana batch sampel cuff diproses dengan **data parallelism** agar latency filter menurun pada data besar.
-- Bagaimana subsistem nyata (sensor/MCU/PC) dimodelkan sebagai **node terdistribusi** dengan **message passing**.
-
-Semua ini diimplementasikan **tanpa hardware fisik** menggunakan generator sinyal dan simulator GUI yang mengikuti spesifikasi CuffnCode.
+**Saat demo:** fase GUI berubah berurutan; terminal menampilkan timing + log `[Node A/B/C]`.
 
 ---
 
-## 2. Arsitektur sistem
+## 8. Pemetaan IFB 206
 
-### 2.1 Hardware (referensi CuffnCode)
-
-| Subsistem | Komponen | Fungsi |
-|-----------|----------|--------|
-| Sensor | MPS20N0040D | Bridge tekanan millivolt (~50–100 mV full-scale) |
-| Analog Front End | AD620 + TLC2272 | Gain ≈ 105, offset ≈ 1,5 V |
-| Aktuator | DC micro-pump + 2 solenoid valve | Inflate / deflate cuff |
-| Digital Controller | STM32F411CE (Black Pill) | ADC, PWM, GPIO |
-| Host (tim kami) | PC Python | Pipeline paralel + 3 node + GUI |
-
-### 2.2 Diagram blok
-
-```
-[Cuff + MPS20N0040D] --> [AFE: AD620 / TLC2272] --> [STM32 ADC]
-         |                                              |
-   [Pump + Valves] <-------- [STM32 PWM/GPIO] <---- [Kontrol cuff]
-         |                                              |
-         +---------------- [Host PC] <----- UART/USB (rencana)
-                    |
-         +----------+----------+
-         |                     |
-  [Data-parallel filter]  [Distributed A→B→C]
-  Pool + chunk waveform    Queue + 3 proses
-```
-
-### 2.3 Pemetaan simulasi → hardware
-
-| Tahap nyata | Modul simulasi |
-|-------------|----------------|
-| Tekanan cuff → mV bridge | `signal_generator.py` |
-| Gain/offset AFE | `cuffncode_specs.py`, telemetri GUI |
-| Sampling ADC | Parameter `fs`, fase STM32 di GUI |
-| Filter hum 50 Hz (roadmap repo) | `filters.notch_50hz()` |
-| Estimasi BP oscillometric | Envelope peak → mapping demo (bukan klinis) |
+| Topik | Bukti di repo |
+|-------|----------------|
+| Data parallelism | `Pool.map` + `process_chunk` |
+| Load balancing | `chunksize` 2 vs 1 |
+| Message passing | `Queue` di `distributed_nodes.py` |
+| Pipeline tersegmentasi | Node A→B→C + diagram GUI |
+| Studi kasus | Notch 50 Hz cuff (roadmap CuffnCode) |
 
 ---
 
-## 3. Komputasi paralel
+## 9. Tim & deliverable
 
-### 3.1 Pola: data parallelism
-
-**Definisi:** satu *task* komputasi (filter) diterapkan ke banyak *partition* data (chunk waveform).
-
-Alur di `parallel_pipeline.py`:
-
-1. `generate_cuff_waveform()` — 4800 sampel (default)
-2. `split_signal(signal, n_chunks)` — mis. 16 chunk
-3. `process_chunk` di tiap worker: moving average → notch 50 Hz (beberapa pass)
-4. `merge_chunks` — urutkan indeks, `concatenate`
-
-Implementasi: `multiprocessing.Pool.map` — pola **SPMD** (Single Program, Multiple Data).
-
-### 3.2 Perbandingan scheduling
-
-| Mode | Implementasi | Kegunaan edukasi |
-|------|--------------|------------------|
-| **Sequential** | Loop for chunk | Baseline waktu |
-| **Parallel** | `Pool.map`, `chunksize=2` | Paralelisme statis |
-| **Dynamic** | `chunksize=1` | Load balancing — worker mengambil chunk berikutnya saat idle |
-
-### 3.3 Interpretasi speedup (untuk laporan)
-
-Contoh di Windows (8 core): parallel bisa **lebih lambat** dari sequential pada data kecil karena overhead **spawn** proses. Dalam laporan, cantumkan:
-
-- Pola data parallel sudah benar (peak seq vs par cocok).
-- Speedup > 1 diharapkan jika ukuran stream ↑ (ADC real-time panjang) atau platform `fork` (Linux).
-- Referensi **Amdahl**: bagian serial (merge, I/O) membatasi speedup.
-
-### 3.4 Cuplikan konsep kode
-
-Worker entry (`filters.py`):
-
-```python
-def process_chunk(args):
-    idx, chunk, fs, passes = args
-    filtered = chunk.astype(np.float64)
-    for _ in range(passes):
-        filtered = notch_50hz(moving_average(filtered, 11), fs)
-    return idx, filtered, float(np.max(filtered))
-```
-
----
-
-## 4. Sistem terdistribusi
-
-### 4.1 Tiga node logis
-
-| Node | Peran | Analog hardware |
-|------|-------|-----------------|
-| **A — Acquisition** | Streaming batch sampel | STM32 + sensor |
-| **B — Processing** | Filter + ekstraksi peak per batch | DSP di MCU atau Host |
-| **C — Storage/UI** | Agregasi peaks → estimasi BP demo | PC / rekam data |
-
-### 4.2 Komunikasi
-
-- **Mechanism:** `multiprocessing.Queue` (FIFO message passing)
-- **Pesan A→B:** `{"type": "samples", "batch_id", "data"}`, lalu `{"type": "eof"}`
-- **Pesan B→C:** `{"type": "features", "peaks"}`, lalu `{"type": "eof"}`
-- **Proses:** `multiprocessing.Process` — tiap node proses OS terpisah (simulasi mesin berbeda pada satu PC)
-
-### 4.3 Diagram alur
-
-```
-Node A --{samples, batch_id}--> Node B --{features, peaks}--> Node C
-         --{eof}---------------->         --{eof}------------>
-```
-
-Implementasi: `distributed_nodes.py` — jalankan via `python main.py` (bagian 2/2).
-
----
-
-## 5. GUI simulator
-
-Fitur utama (`gui_app.py`):
-
-- Diagram alur: sensor → AFE → STM32 → Host
-- Simulasi state pump / valve (inflate, hold, deflate)
-- Grafik **SEBELUM** (mentah + noise/hum) vs **SESUDAH** (filter Host)
-- Log telemetri dan penjelasan spesifikasi AD620/TLC2272
-
-Tombol **Mulai Simulasi** menjalankan animasi dan update grafik — cocok untuk rekaman video demo.
-
----
-
-## 6. Analog Front End (ringkas)
-
-Gain instrumen AD620:
-
-$$G = 1 + \frac{49.4\,\text{k}\Omega}{R_g} \approx 1 + \frac{49.4\,\text{k}\Omega}{470\,\Omega} \approx 105$$
-
-Offset TLC2272:
-
-$$\frac{56\,\text{k}}{47\,\text{k} + 56\,\text{k}} \times 3.3\,\text{V} \approx 1.5\,\text{V}$$
-
-Simulasi TINA-TI dan skema KiCad ada di folder root repo (`TINA-TI/`, `KiCad/`).
-
----
-
-## 7. Checklist kesesuaian EVALUASI 3
-
-| Kriteria | Status | Bukti |
-|----------|--------|-------|
-| Studi kasus terkait domain (sinyal / embedded) | ✅ | CuffnCode BP cuff |
-| Data parallelism | ✅ | `parallel_pipeline.py` |
-| Sistem terdistribusi / message passing | ✅ | `distributed_nodes.py` |
-| Dokumentasi GitHub + Pages | ✅ | Folder `docs/` |
-| Demo runnable | ✅ | `gui.py`, `main.py` |
-| Video demo (opsional kuliah) | ⬜ | Instagram Lab — tim unggah |
-
----
-
-## 8. Tim
-
-| Nama | NRP | Kelas |
+| Nama | NRP | Peran |
 |------|-----|-------|
-| **Farhan Kamil Hermansyah** | 152024150 | CC |
-| Ratu Qolbu Maziah | 152024151 | CC |
-| Syafa Meisya Fitria | 152024182 | AA |
+| **Farhan Kamil Hermansyah** | 152024150 | Implementasi Host-Simulation |
+| Ratu Qolbu Maziah | 152024151 | Tim kelas |
+| Syafa Meisya Fitria | 152024182 | Tim kelas |
 
-Implementasi kode Host-Simulation: **Farhan Kamil Hermansyah**.
-
----
-
-## 9. Keamanan & batasan
-
-- Jangan over-pressure pada sensor MPS20N0040D (hardware nyata).
-- Hindari ground noise USB PC saat pengukuran nyata.
-- Estimasi BP pada simulasi **bukan** diagnosis medis.
+| Deliverable | Status |
+|-------------|--------|
+| Kode | ✓ |
+| Dokumentasi implementasi | ✓ |
+| GitHub Pages | ✓ `/docs` |
+| Video GUI | Instagram Lab |
 
 ---
 
-## 10. Roadmap
+## Referensi
 
-- [ ] Integrasi data ADC nyata dari STM32 (serial/USB)
-- [ ] Notch 60 Hz (region US)
-- [ ] Deploy node B/C ke Raspberry Pi (distributed fisik)
-- [ ] PCB & evaluasi performa (mengikuti repo utama CuffnCode)
+- [Farmil23/CuffnCode](https://github.com/Farmil23/CuffnCode)
+- [CuffnCode upstream](https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode)
+- [Obsidian CuffnCode](https://publish.obsidian.md/auralius/Published/CuffnCode)
 
----
-
-## 11. Kredit
-
-- [CuffnCode — IFAC Activity Fund](https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode)
-- [Farmil23/CuffnCode](https://github.com/Farmil23/CuffnCode) — fork tim IFB 206
-- Instrumentation Amps Guide — Analog Devices
-- Materi kuliah: OpenMP/MPI, load balancing, Flynn taxonomy
+*Estimasi BP demo — bukan diagnosis medis.*

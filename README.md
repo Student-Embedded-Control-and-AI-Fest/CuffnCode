@@ -48,8 +48,8 @@ python main.py         # benchmark terminal: paralel + distributed
 ### Dokumentasi lengkap (GitHub Pages)
 
 - Situs: aktifkan **Pages** dari folder `/docs` pada branch `main` → URL: `https://farmil23.github.io/CuffnCode/`
-- Markdown sumber: [`docs/index.md`](docs/index.md) · versi HTML statis: [`docs/index.html`](docs/index.html)
-- Detail teknis modul: [`Host-Simulation/docs/index.md`](Host-Simulation/docs/index.md)
+- **Dokumentasi implementasi (disarankan untuk dosen):** [`docs/index.html`](docs/index.html) — penjelasan modul, keputusan desain, cuplikan algoritma, bukan template ringkas
+- Markdown ringkas: [`docs/index.md`](docs/index.md) · detail modul: [`Host-Simulation/docs/index.md`](Host-Simulation/docs/index.md)
 
 ### Tim & peran
 
