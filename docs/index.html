@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+```
+<title>PulseCare Documentation</title>
+
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+    :root {
+        --navy: #0b1f3a;
+        --navy-soft: #14355f;
+        --blue: #1769e0;
+        --cyan: #21b6d7;
+        --green: #0f9f6e;
+        --red: #d64545;
+        --yellow: #d98b18;
+        --background: #f5f8fc;
+        --white: #ffffff;
+        --text: #1c2b3a;
+        --muted: #6e7f91;
+        --border: #e5eaf1;
+        --shadow: 0 12px 32px rgba(15, 42, 76, 0.08);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        background: var(--background);
+        color: var(--text);
+        font-family: "Inter", Arial, sans-serif;
+        line-height: 1.7;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .navbar {
+        align-items: center;
+        background: rgba(11, 31, 58, 0.96);
+        display: flex;
+        justify-content: space-between;
+        padding: 16px 7%;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+    }
+
+    .brand {
+        align-items: center;
+        color: white;
+        display: flex;
+        gap: 11px;
+    }
+
+    .brand-icon {
+        align-items: center;
+        background: linear-gradient(135deg, var(--cyan), var(--blue));
+        border-radius: 11px;
+        display: flex;
+        font-size: 23px;
+        font-weight: 800;
+        height: 39px;
+        justify-content: center;
+        width: 39px;
+    }
+
+    .brand h1 {
+        font-size: 17px;
+    }
+
+    .brand p {
+        color: #a8c0d9;
+        font-size: 10px;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 22px;
+    }
+
+    .nav-links a {
+        color: #c7d7e8;
+        font-size: 13px;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+
+    .nav-links a:hover {
+        color: white;
+    }
+
+    .hero {
+        background:
+            linear-gradient(
+                135deg,
+                rgba(11, 31, 58, 0.98),
+                rgba(20, 64, 107, 0.96)
+            );
+        color: white;
+        overflow: hidden;
+        padding: 88px 7% 92px;
+        position: relative;
+    }
+
+    .hero::after {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        content: "";
+        height: 480px;
+        position: absolute;
+        right: -100px;
+        top: -160px;
+        width: 480px;
+    }
+
+    .hero-content {
+        max-width: 830px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .eyebrow {
+        color: #7ed4eb;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.7px;
+        margin-bottom: 14px;
+        text-transform: uppercase;
+    }
+
+    .hero h2 {
+        font-size: 48px;
+        line-height: 1.15;
+        margin-bottom: 18px;
+    }
+
+    .hero-description {
+        color: #c5d7e8;
+        font-size: 16px;
+        max-width: 760px;
+    }
+
+    .hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 26px;
+    }
+
+    .meta-badge {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 24px;
+        color: #e6f2ff;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 9px 13px;
+    }
+
+    .container {
+        margin: 0 auto;
+        max-width: 1240px;
+        padding: 0 24px;
+    }
+
+    .section {
+        padding: 72px 0;
+    }
+
+    .section-alt {
+        background: white;
+    }
+
+    .section-header {
+        margin-bottom: 28px;
+        max-width: 760px;
+    }
+
+    .section-label {
+        color: var(--blue);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+    }
+
+    .section-title {
+        color: var(--navy);
+        font-size: 30px;
+        line-height: 1.3;
+        margin-bottom: 10px;
+    }
+
+    .section-description {
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+    .preview-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        padding: 14px;
+    }
+
+    .preview-card img {
+        border-radius: 11px;
+        display: block;
+        width: 100%;
+    }
+
+    .overview-grid {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: repeat(3, 1fr);
+        margin-top: 30px;
+    }
+
+    .info-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 15px;
+        box-shadow: var(--shadow);
+        padding: 20px;
+    }
+
+    .info-icon {
+        align-items: center;
+        background: #eaf3ff;
+        border-radius: 11px;
+        color: var(--blue);
+        display: flex;
+        font-size: 18px;
+        font-weight: 800;
+        height: 42px;
+        justify-content: center;
+        margin-bottom: 14px;
+        width: 42px;
+    }
+
+    .info-card h3 {
+        color: var(--navy);
+        font-size: 16px;
+        margin-bottom: 6px;
+    }
+
+    .info-card p {
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .architecture {
+        align-items: stretch;
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(5, 1fr);
+        margin-top: 30px;
+    }
+
+    .node {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 15px;
+        box-shadow: var(--shadow);
+        padding: 20px 14px;
+        position: relative;
+        text-align: center;
+    }
+
+    .node:not(:last-child)::after {
+        color: var(--blue);
+        content: "→";
+        font-size: 25px;
+        font-weight: 800;
+        position: absolute;
+        right: -23px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 3;
+    }
+
+    .node-number {
+        align-items: center;
+        background: linear-gradient(135deg, var(--cyan), var(--blue));
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        font-size: 12px;
+        font-weight: 800;
+        height: 32px;
+        justify-content: center;
+        margin: 0 auto 12px;
+        width: 32px;
+    }
+
+    .node h3 {
+        color: var(--navy);
+        font-size: 14px;
+        margin-bottom: 6px;
+    }
+
+    .node p {
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .features-grid {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: repeat(2, 1fr);
+        margin-top: 28px;
+    }
+
+    .feature-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 15px;
+        padding: 22px;
+    }
+
+    .feature-card h3 {
+        color: var(--navy);
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    .feature-card p {
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .feature-card code {
+        background: #edf4fc;
+        border-radius: 5px;
+        color: var(--blue);
+        font-size: 12px;
+        padding: 3px 6px;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        background: white;
+        border-collapse: collapse;
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        width: 100%;
+    }
+
+    th,
+    td {
+        border-bottom: 1px solid var(--border);
+        padding: 15px;
+        text-align: left;
+    }
+
+    th {
+        background: #f8fbff;
+        color: #657689;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    td {
+        color: #425367;
+        font-size: 13px;
+    }
+
+    .steps {
+        display: grid;
+        gap: 16px;
+        margin-top: 24px;
+    }
+
+    .step {
+        align-items: flex-start;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        display: flex;
+        gap: 15px;
+        padding: 18px;
+    }
+
+    .step-number {
+        align-items: center;
+        background: #eaf3ff;
+        border-radius: 50%;
+        color: var(--blue);
+        display: flex;
+        flex-shrink: 0;
+        font-size: 13px;
+        font-weight: 800;
+        height: 34px;
+        justify-content: center;
+        width: 34px;
+    }
+
+    .step h3 {
+        color: var(--navy);
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .step p {
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    pre {
+        background: #0b1f3a;
+        border-radius: 10px;
+        color: #d8eafa;
+        font-size: 13px;
+        margin-top: 10px;
+        overflow-x: auto;
+        padding: 14px;
+    }
+
+    .warning {
+        background: #fff8e8;
+        border: 1px solid #f4dfab;
+        border-radius: 12px;
+        color: #7d5b18;
+        font-size: 13px;
+        margin-top: 24px;
+        padding: 15px;
+    }
+
+    .profile-card {
+        align-items: center;
+        background:
+            linear-gradient(
+                135deg,
+                rgba(11, 31, 58, 0.99),
+                rgba(20, 64, 107, 0.97)
+            );
+        border-radius: 17px;
+        color: white;
+        display: flex;
+        gap: 18px;
+        padding: 24px;
+    }
+
+    .profile-avatar {
+        align-items: center;
+        background: linear-gradient(135deg, var(--cyan), var(--blue));
+        border-radius: 50%;
+        display: flex;
+        flex-shrink: 0;
+        font-size: 19px;
+        font-weight: 800;
+        height: 62px;
+        justify-content: center;
+        width: 62px;
+    }
+
+    .profile-card h3 {
+        font-size: 18px;
+        margin-bottom: 4px;
+    }
+
+    .profile-card p {
+        color: #c6d9eb;
+        font-size: 13px;
+    }
+
+    footer {
+        background: var(--navy);
+        color: #a8bfd6;
+        font-size: 12px;
+        padding: 22px;
+        text-align: center;
+    }
+
+    @media (max-width: 960px) {
+        .architecture {
+            grid-template-columns: 1fr;
+        }
+
+        .node:not(:last-child)::after {
+            bottom: -25px;
+            content: "↓";
+            left: 50%;
+            right: auto;
+            top: auto;
+            transform: translateX(-50%);
+        }
+
+        .overview-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 760px) {
+        .nav-links {
+            display: none;
+        }
+
+        .hero {
+            padding: 66px 24px;
+        }
+
+        .hero h2 {
+            font-size: 35px;
+        }
+
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .section {
+            padding: 52px 0;
+        }
+
+        .section-title {
+            font-size: 25px;
+        }
+    }
+</style>
+```
+
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="brand">
+            <div class="brand-icon">+</div>
+
+```
+        <div>
+            <h1>PulseCare</h1>
+            <p>Project Documentation</p>
+        </div>
+    </div>
+
+    <div class="nav-links">
+        <a href="#overview">Overview</a>
+        <a href="#architecture">Arsitektur</a>
+        <a href="#features">Fitur</a>
+        <a href="#installation">Cara Menjalankan</a>
+        <a href="#contributor">Kontributor</a>
+    </div>
+</nav>
+
+<header class="hero">
+    <div class="hero-content">
+        <p class="eyebrow">CuffnCode Project Extension</p>
+
+        <h2>
+            Distributed Blood Pressure Monitoring Dashboard
+        </h2>
+
+        <p class="hero-description">
+            Simulasi monitoring tekanan darah berbasis web yang menerapkan
+            konsep komputasi paralel dan sistem terdistribusi. Data sensor
+            dibuat secara dummy, diproses oleh beberapa worker, disimpan
+            melalui Storage Node, lalu ditampilkan melalui dashboard
+            klinis PulseCare.
+        </p>
+
+        <div class="hero-meta">
+            <span class="meta-badge">Python Flask</span>
+            <span class="meta-badge">Parallel Processing</span>
+            <span class="meta-badge">Distributed System</span>
+            <span class="meta-badge">CSV Storage</span>
+        </div>
+    </div>
+</header>
+
+<main>
+    <section class="section" id="overview">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-label">Project Overview</p>
+
+                <h2 class="section-title">
+                    Gambaran Singkat Project
+                </h2>
+
+                <p class="section-description">
+                    Project ini merupakan pengembangan tambahan dari
+                    repository CuffnCode. Tujuannya adalah membuat simulasi
+                    pengolahan data tekanan darah dengan alur yang lebih
+                    mudah dipahami dan ditampilkan secara visual.
+                </p>
+            </div>
+
+            <div class="preview-card">
+                <img
+                    src="assets/dashboard-preview.png"
+                    alt="Tampilan dashboard PulseCare"
+                >
+            </div>
+
+            <div class="overview-grid">
+                <article class="info-card">
+                    <div class="info-icon">+</div>
+
+                    <h3>Simulasi Data Sensor</h3>
+
+                    <p>
+                        Data tekanan darah dan detak jantung dibuat secara
+                        dummy karena belum memakai sensor fisik secara
+                        langsung.
+                    </p>
+                </article>
+
+                <article class="info-card">
+                    <div class="info-icon">⚙</div>
+
+                    <h3>Komputasi Paralel</h3>
+
+                    <p>
+                        Banyak data sensor diproses secara bersamaan memakai
+                        beberapa worker dengan Python multiprocessing.
+                    </p>
+                </article>
+
+                <article class="info-card">
+                    <div class="info-icon">▦</div>
+
+                    <h3>Dashboard Monitoring</h3>
+
+                    <p>
+                        Hasil pengolahan data ditampilkan melalui dashboard
+                        web dengan tampilan seperti sistem monitoring klinis.
+                    </p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-alt" id="architecture">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-label">System Architecture</p>
+
+                <h2 class="section-title">
+                    Alur Sistem Terdistribusi
+                </h2>
+
+                <p class="section-description">
+                    Setiap bagian program memiliki tugas masing-masing,
+                    tetapi semuanya saling terhubung dalam satu alur sistem.
+                </p>
+            </div>
+
+            <div class="architecture">
+                <article class="node">
+                    <div class="node-number">1</div>
+
+                    <h3>Sensor Node</h3>
+
+                    <p>
+                        Menghasilkan data tekanan darah dummy.
+                    </p>
+                </article>
+
+                <article class="node">
+                    <div class="node-number">2</div>
+
+                    <h3>Processing Workers</h3>
+
+                    <p>
+                        Memproses data secara paralel.
+                    </p>
+                </article>
+
+                <article class="node">
+                    <div class="node-number">3</div>
+
+                    <h3>Analysis Result</h3>
+
+                    <p>
+                        Menentukan status hasil klasifikasi.
+                    </p>
+                </article>
+
+                <article class="node">
+                    <div class="node-number">4</div>
+
+                    <h3>Storage Node</h3>
+
+                    <p>
+                        Menyimpan hasil pengolahan ke CSV.
+                    </p>
+                </article>
+
+                <article class="node">
+                    <div class="node-number">5</div>
+
+                    <h3>PulseCare Dashboard</h3>
+
+                    <p>
+                        Menampilkan data melalui browser.
+                    </p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="features">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-label">Main Features</p>
+
+                <h2 class="section-title">
+                    Penjelasan Fitur Utama
+                </h2>
+
+                <p class="section-description">
+                    Setiap file memiliki fungsi yang berbeda agar struktur
+                    program lebih jelas dan mudah dipahami.
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <article class="feature-card">
+                    <h3>1. Sensor Node</h3>
+
+                    <p>
+                        File <code>sensor_node.py</code> menghasilkan data
+                        dummy berupa timestamp, tekanan darah atas, tekanan
+                        darah bawah, dan detak jantung.
+                    </p>
+                </article>
+
+                <article class="feature-card">
+                    <h3>2. Processing Workers</h3>
+
+                    <p>
+                        File <code>processor.py</code> memproses banyak data
+                        secara paralel menggunakan
+                        <code>multiprocessing.Pool</code>.
+                    </p>
+                </article>
+
+                <article class="feature-card">
+                    <h3>3. Storage Node</h3>
+
+                    <p>
+                        File <code>storage_node.py</code> menyimpan hasil
+                        pemrosesan ke file CSV dan membaca kembali data yang
+                        akan ditampilkan.
+                    </p>
+                </article>
+
+                <article class="feature-card">
+                    <h3>4. Flask Application</h3>
+
+                    <p>
+                        File <code>app.py</code> menghubungkan Sensor Node,
+                        Processing Workers, Storage Node, dan tampilan
+                        dashboard.
+                    </p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-alt">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-label">Classification Rules</p>
+
+                <h2 class="section-title">
+                    Aturan Klasifikasi Data
+                </h2>
+
+                <p class="section-description">
+                    Data dummy yang sudah dibuat akan dikelompokkan
+                    berdasarkan nilai tekanan darah dan detak jantung.
+                </p>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Jenis Data</th>
+                            <th>Kondisi</th>
+                            <th>Hasil Klasifikasi</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td>Tekanan Darah</td>
+                            <td>
+                                Systolic di bawah 90 atau diastolic di bawah 60
+                            </td>
+                            <td>Low Blood Pressure</td>
+                        </tr>
+
+                        <tr>
+                            <td>Tekanan Darah</td>
+                            <td>
+                                Systolic minimal 140 atau diastolic minimal 90
+                            </td>
+                            <td>High Blood Pressure</td>
+                        </tr>
+
+                        <tr>
+                            <td>Tekanan Darah</td>
+                            <td>
+                                Selain kondisi di atas
+                            </td>
+                            <td>Normal Blood Pressure</td>
+                        </tr>
+
+                        <tr>
+                            <td>Detak Jantung</td>
+                            <td>
+                                Di bawah 60 BPM
+                            </td>
+                            <td>Low Heart Rate</td>
+                        </tr>
+
+                        <tr>
+                            <td>Detak Jantung</td>
+                            <td>
+                                Di atas 100 BPM
+                            </td>
+                            <td>High Heart Rate</td>
+                        </tr>
+
+                        <tr>
+                            <td>Detak Jantung</td>
+                            <td>
+                                Selain kondisi di atas
+                            </td>
+                            <td>Normal Heart Rate</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="installation">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-label">Installation Guide</p>
+
+                <h2 class="section-title">
+                    Cara Menjalankan Project
+                </h2>
+
+                <p class="section-description">
+                    Project dapat dijalankan secara lokal melalui terminal.
+                </p>
+            </div>
+
+            <div class="steps">
+                <article class="step">
+                    <div class="step-number">1</div>
+
+                    <div>
+                        <h3>Masuk ke folder project</h3>
+
+                        <pre>cd Distributed-Blood-Pressure-Monitoring</pre>
+                    </div>
+                </article>
+
+                <article class="step">
+                    <div class="step-number">2</div>
+
+                    <div>
+                        <h3>Install library yang dibutuhkan</h3>
+
+                        <pre>pip install -r requirements.txt</pre>
+                    </div>
+                </article>
+
+                <article class="step">
+                    <div class="step-number">3</div>
+
+                    <div>
+                        <h3>Jalankan Flask Application</h3>
+
+                        <pre>python app.py</pre>
+                    </div>
+                </article>
+
+                <article class="step">
+                    <div class="step-number">4</div>
+
+                    <div>
+                        <h3>Buka dashboard melalui browser</h3>
+
+                        <pre>http://127.0.0.1:5000</pre>
+                    </div>
+                </article>
+            </div>
+
+            <div class="warning">
+                <strong>Catatan:</strong>
+                Project ini hanya digunakan untuk kebutuhan pembelajaran,
+                simulasi, dan demonstrasi. Project ini bukan alat diagnosis
+                medis asli.
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-alt" id="contributor">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-label">Contributor</p>
+
+                <h2 class="section-title">
+                    Informasi Kontributor
+                </h2>
+            </div>
+
+            <div class="profile-card">
+                <div class="profile-avatar">AF</div>
+
+                <div>
+                    <h3>Alfarezal Fathir</h3>
+
+                    <p>NRP: 152024143</p>
+
+                    <p>
+                        Evaluasi 3 — Komputasi Paralel dan Sistem Terdistribusi
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    PulseCare Clinical Monitoring Dashboard ·
+    CuffnCode Distributed Blood Pressure Simulation
+</footer>
+
+</body>
+</html>
