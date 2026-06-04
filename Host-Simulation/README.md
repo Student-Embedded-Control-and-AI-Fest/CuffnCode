@@ -8,6 +8,32 @@ Proyek referensi hardware: [Student-Embedded-Control-and-AI-Fest/CuffnCode](http
 
 Simulasi **software-only** rantai Host CuffnCode: pemrosesan sinyal cuff setelah ADC STM32, dengan pola yang dibahas di kuliah paralel dan terdistribusi.
 
+Dokumentasi lengkap:
+
+- **Solusi** (masalah GitHub → kode saya): [`../docs/index.html#solusi`](../docs/index.html#solusi)
+- **Cara tunjukkan sambil menjelaskan**: [`../docs/index.html#demo`](../docs/index.html#demo)
+- README root: [`../README.md`](../README.md) — panduan presentasi di bagian *Cara menunjukkan*
+
+---
+
+## Solusi saya (ringkas)
+
+Repo [CuffnCode upstream](https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode) tidak menyediakan kode Host. Saya menambahkan:
+
+1. **Filter paralel** — menjawab roadmap notch 50 Hz + beban CPU batch (`parallel_pipeline.py`, `filters.py`)
+2. **Pipeline terdistribusi** — memetakan STM32 stream → DSP Host → UI (`distributed_nodes.py`)
+3. **Simulator + GUI** — demo oscillometric tanpa hardware (`gui_app.py`, `hardware_sim.py`, `signal_generator.py`)
+
+---
+
+## Cara demo cepat (sambil jelaskan)
+
+| Urutan | Perintah / layar | Kalimat penjelasan singkat |
+|--------|------------------|----------------------------|
+| 1 | Bandingkan [upstream](https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode) vs [Host-Simulation di fork](https://github.com/Farmil23/CuffnCode/tree/main/Host-Simulation) | “Folder ini saya tambahkan; upstream tidak punya.” |
+| 2 | `python main.py` | “Paralel: Pool + timing; Distributed: log Node A/B/C.” |
+| 3 | `python gui.py` → Mulai Simulasi | “Simulator hardware + grafik filter + hum ↓% dari FFT.” |
+
 ---
 
 ## Apa yang diselesaikan (konteks matkul)
@@ -40,11 +66,11 @@ Simulasi **software-only** rantai Host CuffnCode: pemrosesan sinyal cuff setelah
 
 ## Pelaksana
 
-| Nama | NRP | Kelas | Peran |
-|------|-----|-------|-------|
-| **Farhan Kamil Hermansyah** | 152024150 | CC | Seluruh modul Host-Simulation (kode, GUI, dokumentasi) |
-| Ratu Qolbu Maziah | 152024151 | CC | Tim kelas |
-| Syafa Meisya Fitria | 152024182 | AA | Tim kelas |
+| Nama | NRP | Kelas |
+|------|-----|-------|
+| **Farhan Kamil Hermansyah** | 152024150 | CC |
+
+Proyek Host-Simulation (kode, GUI, benchmark, dokumentasi) dikerjakan **sendiri**.
 
 ---
 

@@ -6,9 +6,81 @@
 
 **CuffnCode** is a retrofitted blood pressure measurement system for teaching and research. In the long term, it aims to become an overinstrumented platform for developing and testing signal processing and control algorithms.
 
-**Fork tim kuliah:** [Farmil23/CuffnCode](https://github.com/Farmil23/CuffnCode) — kontribusi **Host-Simulation** untuk mata kuliah **IFB 206 Komputasi Paralel dan Sistem Terdistribusi** (ITENAS, EVALUASI 3, Semester Genap 2025/2026).
+**Fork kuliah:** [Farmil23/CuffnCode](https://github.com/Farmil23/CuffnCode) — **Host-Simulation** (IFB 206, EVALUASI 3) oleh **Farhan Kamil Hermansyah** (152024150).
 
 Repo hardware asli: [Student-Embedded-Control-and-AI-Fest/CuffnCode](https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode)
+
+---
+
+## Solusi yang saya buat (bukan isi repo GitHub asli)
+
+Repo CuffnCode upstream berisi **KiCad, TINA-TI, dan dokumentasi hardware** — belum ada kode Host, filter, atau demo paralel. Saya menambahkan **tiga solusi perangkat lunak** di folder `Host-Simulation/`:
+
+| Masalah dari konteks CuffnCode | Solusi saya | Bukti di repo |
+|------------------------------|-------------|---------------|
+| Roadmap *50/60 Hz notch* belum diimplementasi | Filter IIR notch 50 Hz + moving average per chunk; analisis FFT hum ↓% | `filters.py`, `signal_analysis.py` |
+| Pemrosesan batch ADC di PC berat | Data parallelism: `Pool.map` + merge terindeks + benchmark scheduling | `parallel_pipeline.py` |
+| Rantai sensor → MCU → Host tersegmentasi | 3 proses A (acquire) → B (process) → C (store) via `Queue` | `distributed_nodes.py` |
+| Demo tanpa board fisik | GUI: state machine pump/valve, grafik SEBELUM/SESUDAH, telemetri AFE | `gui_app.py`, `hardware_sim.py` |
+
+**Bukan copy-paste:** folder `Host-Simulation/` tidak ada di upstream; algoritma & GUI saya tulis; angka benchmark dari `python main.py` di mesin saya.
+
+Dokumentasi interaktif (titik navigasi klik): **[GitHub Pages — `docs/index.html`](docs/index.html)** · bagian **Solusi** & **Demo**.
+
+---
+
+## Cara menunjukkan sambil menjelaskan (panduan presentasi)
+
+Ikuti urutan ini saat demo ke dosen atau rekam video — **tunjukkan layar** dan **jelaskan** dengan naskah di kolom kanan.
+
+### 1. Bandingkan GitHub asli vs fork saya
+
+| Tunjukkan | Jelaskan |
+|-----------|----------|
+| [CuffnCode upstream](https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode) — tidak ada folder `Host-Simulation/` | “Repo asli hanya hardware: KiCad, TINA-TI, gambar. Belum ada kode Host atau komputasi paralel.” |
+| [Farmil23/CuffnCode → Host-Simulation](https://github.com/Farmil23/CuffnCode/tree/main/Host-Simulation) | “Ini tambahan saya untuk IFB 206: Python, GUI, pipeline paralel & distributed.” |
+| README ini + [halaman Pages](docs/index.html) | “Dokumentasi memetakan masalah CuffnCode ke file solusi saya — bukan menyalin teks README hardware.” |
+
+### 2. Terminal — bukti paralel & distributed
+
+```bash
+cd Host-Simulation
+pip install -r requirements.txt
+python main.py
+```
+
+| Output yang muncul | Jelaskan ke dosen |
+|--------------------|-------------------|
+| `Sequential` / `Parallel` / `Dynamic` + detik | “Tiga mode scheduling; saya ukur jujur — di Windows bisa speedup &lt; 1 karena overhead proses.” |
+| `Peak match (seq vs par): OK` | “Hasil filter paralel sama dengan sequential — merge chunk benar.” |
+| `[Node A]`, `[Node B] Batch 0..3`, `[Node C]` | “Tiga proses terpisah + Queue: acquisition → processing → storage, analog rantai STM32→Host→UI.” |
+
+**Kaitkan ke CuffnCode:** roadmap *notch 50 Hz* → ada di `filters.py`; roadmap *evaluasi performa* → benchmark timing di atas.
+
+### 3. GUI — bukti simulator tanpa hardware
+
+```bash
+python gui.py
+```
+
+Klik **Mulai Simulasi**, lalu tunjukkan:
+
+| Di layar GUI | Jelaskan |
+|--------------|----------|
+| Diagram pump / valve / sensor / AFE / STM32 menyala per fase | “State machine saya mengikuti alur retrofit CuffnCode — demo tanpa board.” |
+| Grafik **SEBELUM** (merah, hum 50 Hz terlihat) | “Sinyal sintetis: envelope + `3·sin(50 Hz)` — masalah noise di README proyek.” |
+| Grafik **SESUDAH** (hijau) + `Hum 50Hz ↓ xx%` | “Filter Host saya; persen dari FFT (`signal_analysis.py`), bukan angka hardcode.” |
+| Telemetri Bridge / AD620 / ADC code | “Rumus gain & offset dari spesifikasi repo, dihitung di `cuffncode_specs.py`.” |
+| Log `Pool.map chunk` dan `Node A/B/C` | “Konsep sama dengan `main.py`, divisualkan untuk penilaian.” |
+
+### 4. Jika ditanya “ini bukan copy-paste?”
+
+1. **Folder baru** — `Host-Simulation/` nol di upstream, penuh di fork.  
+2. **Kode runnable** — `main.py` / `gui.py`, bukan hanya bullet “Next-to-Do”.  
+3. **Angka hidup** — hum ↓% dan timing dari program Anda, bukan screenshot orang lain.  
+4. **Keputusan saya** — GUI tanpa `Pool` (animasi); benchmark dengan `Pool`; `seed=42` reproduksibel.
+
+**Video singkat (20–30 s):** upstream vs fork (3 s) → GUI grafik SEBELUM/SESUDAH (15 s) → terminal `Peak match: OK` + Node B (5 s).
 
 ---
 
@@ -30,7 +102,7 @@ Program berjalan (sudah diverifikasi di Windows): `python main.py` menjalankan b
 
 ## Host simulation — Komputasi Paralel (ITENAS IFB 206)
 
-Tim mengembangkan **lapisan Host (PC)** dari rantai CuffnCode: setelah ADC STM32, sinyal tekanan cuff perlu difilter (hum 50 Hz, noise) sebelum estimasi tekanan. Tanpa hardware fisik, modul ini mensimulasikan sensor, AFE, MCU, dan Host dengan:
+Saya mengembangkan **lapisan Host (PC)** dari rantai CuffnCode: setelah ADC STM32, sinyal tekanan cuff perlu difilter (hum 50 Hz, noise) sebelum estimasi tekanan. Tanpa hardware fisik, modul ini mensimulasikan sensor, AFE, MCU, dan Host dengan:
 
 - **Data parallelism** — pembagian waveform menjadi chunk; filter identik di tiap worker (`Pool`)
 - **Distributed pipeline** — Node **A** (acquisition) → **B** (processing) → **C** (storage/UI) via antrian pesan
@@ -51,13 +123,13 @@ python main.py         # benchmark terminal: paralel + distributed
 - **Dokumentasi implementasi (disarankan untuk dosen):** [`docs/index.html`](docs/index.html) — penjelasan modul, keputusan desain, cuplikan algoritma, bukan template ringkas
 - Markdown ringkas: [`docs/index.md`](docs/index.md) · detail modul: [`Host-Simulation/docs/index.md`](Host-Simulation/docs/index.md)
 
-### Tim & peran
+### Pelaksana
 
-| Nama | NRP | Kelas | Peran |
-|------|-----|-------|-------|
-| **Farhan Kamil Hermansyah** | 152024150 | CC | Implementasi Host-Simulation (GUI, pipeline paralel & terdistribusi, dokumentasi) |
-| Ratu Qolbu Maziah | 152024151 | CC | Tim kelas / dokumentasi |
-| Syafa Meisya Fitria | 152024182 | AA | Tim kelas / dokumentasi |
+| Nama | NRP | Kelas |
+|------|-----|-------|
+| **Farhan Kamil Hermansyah** | 152024150 | CC |
+
+Seluruh modul **Host-Simulation** (GUI, pipeline paralel & terdistribusi, dokumentasi) dikerjakan **sendiri**.
 
 ### Struktur folder Host-Simulation
 

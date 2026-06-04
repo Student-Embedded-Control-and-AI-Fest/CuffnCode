@@ -21,4 +21,7 @@ python gui.py
 - Detail teknis: [`Host-Simulation/docs/`](Host-Simulation/docs/)
 - Desain hardware: [Obsidian CuffnCode](https://publish.obsidian.md/auralius/Published/CuffnCode)
 
-Tim: Farhan Kamil Hermansyah (152024150), Ratu Qolbu Maziah (152024151), Syafa Meisya Fitria (152024182).
+Pelaksana: **Farhan Kamil Hermansyah** (152024150, CC) — dikerjakan sendiri.
+
+**Cara tunjukkan:** upstream (tanpa `Host-Simulation/`) → fork → `python main.py` → `python gui.py`.  
+Panduan naskah: [`docs/index.html#demo`](docs/index.html#demo) · [`README.md`](README.md).

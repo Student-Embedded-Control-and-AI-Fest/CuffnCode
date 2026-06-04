@@ -25,12 +25,122 @@
     .impl strong { color: var(--ok); }
     ul { padding-left: 1.25rem; }
     li { margin: 0.35rem 0; }
-    .toc { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem; margin: 1.25rem 0; }
-    .toc ol { margin: 0.5rem 0 0; padding-left: 1.25rem; }
     .author { color: var(--ok); }
+    h2[id], h3[id] { scroll-margin-top: 1.5rem; }
+    /* Navigasi mengambang — klik langsung ke bagian */
+    .float-nav {
+      position: fixed;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      padding: 0.65rem 0.5rem;
+      background: rgba(22, 27, 34, 0.92);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.45);
+      backdrop-filter: blur(8px);
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .float-nav a {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.72rem;
+      padding: 0.35rem 0.5rem 0.35rem 0.35rem;
+      border-radius: 999px;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .float-nav a:hover {
+      color: var(--text);
+      background: rgba(88, 166, 255, 0.15);
+    }
+    .float-nav a.active {
+      color: #fff;
+      background: var(--accent);
+    }
+    .float-nav .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+      flex-shrink: 0;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .float-nav a:hover .dot { background: var(--accent); transform: scale(1.15); }
+    .float-nav a.active .dot { background: #fff; box-shadow: 0 0 0 2px var(--accent); }
+    .float-nav .label { display: none; }
+    @media (min-width: 1100px) {
+      body { margin-right: 3.5rem; }
+      .float-nav .label { display: inline; }
+      .float-nav { padding: 0.75rem 0.65rem; }
+    }
+    @media (max-width: 699px) {
+      .float-nav {
+        top: auto;
+        bottom: 1rem;
+        right: 50%;
+        transform: translateX(50%);
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        max-width: 96vw;
+        border-radius: 12px;
+        gap: 0.35rem;
+      }
+      .float-nav a { padding: 0.4rem; }
+      .float-nav .label { display: none; }
+    }
+    .top-link {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      z-index: 999;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      text-align: center;
+      line-height: 42px;
+      text-decoration: none;
+      font-size: 1.1rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .top-link.visible { opacity: 1; pointer-events: auto; }
   </style>
 </head>
 <body>
+
+  <!-- Navigasi mengambang: klik titik / label → scroll ke bagian -->
+  <nav class="float-nav" aria-label="Navigasi bagian dokumentasi">
+    <a href="#atas" data-section="atas" title="Judul"><span class="dot"></span><span class="label">Awal</span></a>
+    <a href="#solusi" data-section="solusi" title="Solusi saya"><span class="dot"></span><span class="label">Solusi</span></a>
+    <a href="#kontribusi" data-section="kontribusi" title="Kontribusi"><span class="dot"></span><span class="label">Kontribusi</span></a>
+    <a href="#desain" data-section="desain" title="Desain"><span class="dot"></span><span class="label">Desain</span></a>
+    <a href="#modul" data-section="modul" title="Modul"><span class="dot"></span><span class="label">Modul</span></a>
+    <a href="#sinyal" data-section="sinyal" title="Model sinyal"><span class="dot"></span><span class="label">Sinyal</span></a>
+    <a href="#paralel" data-section="paralel" title="Paralel"><span class="dot"></span><span class="label">Paralel</span></a>
+    <a href="#distributed" data-section="distributed" title="Distributed"><span class="dot"></span><span class="label">Distributed</span></a>
+    <a href="#gui" data-section="gui" title="GUI"><span class="dot"></span><span class="label">GUI</span></a>
+    <a href="#demo" data-section="demo" title="Cara tunjukkan"><span class="dot"></span><span class="label">Demo</span></a>
+    <a href="#jalankan" data-section="jalankan" title="Cara jalankan"><span class="dot"></span><span class="label">Jalankan</span></a>
+    <a href="#matkul" data-section="matkul" title="IFB 206"><span class="dot"></span><span class="label">Matkul</span></a>
+    <a href="#pelaksana" data-section="pelaksana" title="Pelaksana"><span class="dot"></span><span class="label">Pelaksana</span></a>
+  </nav>
+  <a href="#atas" class="top-link" id="topBtn" aria-label="Kembali ke atas">↑</a>
+
+  <div id="atas"></div>
 
   <p>
     <span class="badge">IFB 206</span>
@@ -53,24 +163,246 @@
     Pages hanya dokumentasi; bukti visual: rekam layar GUI atau video Instagram Lab.
   </div>
 
-  <nav class="toc">
-    <strong>Daftar isi</strong>
-    <ol>
-      <li><a href="#kontribusi">Kontribusi &amp; keaslian kerja</a></li>
-      <li><a href="#desain">Keputusan desain yang saya ambil</a></li>
-      <li><a href="#modul">Modul yang saya implementasikan</a></li>
-      <li><a href="#paralel">Komputasi paralel (detail kode)</a></li>
-      <li><a href="#distributed">Sistem terdistribusi (detail kode)</a></li>
-      <li><a href="#gui">GUI &amp; state machine hardware</a></li>
-      <li><a href="#sinyal">Model sinyal &amp; analisis FFT</a></li>
-      <li><a href="#jalankan">Cara menjalankan &amp; output yang diharapkan</a></li>
-      <li><a href="#matkul">Pemetaan IFB 206</a></li>
-      <li><a href="#tim">Tim &amp; referensi</a></li>
-    </ol>
-  </nav>
+  <p class="lead" style="margin-top:0.5rem;font-size:0.95rem;">
+    Gunakan <strong>titik navigasi di kanan</strong> (atau bawah pada HP) — klik <strong>Solusi</strong> untuk ringkasan masalah &amp; jawaban saya.
+  </p>
+
+  <!-- ========== SOLUSI ========== -->
+  <h2 id="solusi">Solusi yang saya buat — dari masalah CuffnCode (GitHub)</h2>
+  <p>
+    Repo <a href="https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode">CuffnCode resmi</a>
+    fokus ke <strong>hardware</strong>: sensor bridge, AFE (AD620+TLC2272), STM32F411, pompa &amp; valve, simulasi TINA-TI/KiCad.
+    <strong>Tidak ada</strong> kode Python, pipeline Host, atau demo komputasi paralel di repo tersebut.
+    Tugas saya di IFB 206: menambahkan <strong>lapisan perangkat lunak Host</strong> yang menjawab kebutuhan proyek CuffnCode
+    <em>sekaligus</em> memenuhi materi paralel &amp; terdistribusi — tanpa menyalin README upstream.
+  </p>
+
+  <h3>Apa yang sudah ada di GitHub CuffnCode (bukan karya saya)</h3>
+  <table>
+    <tr><th>Isi repo upstream</th><th>Status</th></tr>
+    <tr><td>Desain AFE, gain AD620, offset TLC2272</td><td>Dokumentasi + TINA-TI</td></tr>
+    <tr><td>Sensor MPS20N0040D, prototipe Black Pill</td><td>Gambar + penjelasan</td></tr>
+    <tr><td>Pompa DC + 2 solenoid valve (inflate/deflate)</td><td>Diagram / Obsidian</td></tr>
+    <tr><td>Roadmap: <em>50/60 Hz notch</em>, PCB, evaluasi performa</td><td>Daftar rencana — <strong>belum dikodekan</strong></td></tr>
+    <tr><td>Folder <code>Host-Simulation/</code>, <code>parallel_pipeline.py</code>, GUI Python</td><td><strong>Tidak ada</strong></td></tr>
+  </table>
+
+  <h3>Masalah yang saya ambil dari konteks proyek itu</h3>
+  <ol>
+    <li><strong>Sinyal cuff lemah + hum 50 Hz</strong> — README menyebut noise USB/PLN; roadmap minta notch, tapi belum ada implementasi.</li>
+    <li><strong>Batch sampel ADC besar</strong> — setelah STM32 streaming ke PC, filter envelope akan CPU-heavy; perlu pola <em>data parallel</em>.</li>
+    <li><strong>Subsistem terpisah secara fisik</strong> — sensor/MCU/PC bisa dimodelkan sebagai node berbeda → materi <em>sistem terdistribusi</em>.</li>
+    <li><strong>Demo kuliah tanpa board</strong> — mahasiswa harus menunjukkan alur inflate→deflate→filter tanpa membawa hardware ke kelas.</li>
+  </ol>
+
+  <h3>Tiga solusi yang saya implementasikan sendiri</h3>
+
+  <div class="impl">
+    <strong>Solusi 1 — Pipeline filter paralel di Host (data parallelism)</strong><br>
+    <em>Masalah CuffnCode:</em> hum killer &amp; pemrosesan sinyal belum ada di firmware; Host akan menerima ribuan sampel.<br>
+    <em>Yang saya buat:</em> memecah waveform jadi chunk → tiap chunk melalui <code>moving_average</code> + <code>notch_50hz</code> (IIR saya tulis sendiri) → <code>Pool.map</code> → merge terindeks.<br>
+    <em>Bukti:</em> <code>parallel_pipeline.py</code>, <code>filters.py</code> — benchmark mencetak waktu sequential/parallel <strong>jujur</strong> (termasuk speedup &lt; 1 di Windows).
+  </div>
+
+  <div class="impl">
+    <strong>Solusi 2 — Arsitektur terdistribusi A → B → C (message passing)</strong><br>
+    <em>Masalah CuffnCode:</em> platform “overinstrumented” punya rantai: acquisition di MCU, DSP bisa di Host, tampilan BP di UI.<br>
+    <em>Yang saya buat:</em> tiga <code>Process</code> terpisah — A mengirim batch <code>{"type":"samples"}</code>, B memfilter &amp; mengirim peaks, C mengagregasi estimasi BP demo — semua lewat <code>Queue</code>, bukan variabel global.<br>
+    <em>Bukti:</em> <code>distributed_nodes.py</code> — log <code>[Node A|B|C]</code> saat <code>python main.py</code>.
+  </div>
+
+  <div class="impl">
+    <strong>Solusi 3 — Simulator software + GUI edukatif (tanpa hardware)</strong><br>
+    <em>Masalah CuffnCode:</em> repo hanya foto/skema; tidak ada cara interaktif melihat efek filter pada oscillometric deflate.<br>
+    <em>Yang saya buat:</em> generator envelope+hum sintetis; state machine 11 fase (pump/valve/sensor/AFE/STM32/Host); grafik SEBELUM/SESUDAH; metrik FFT hum ↓% di <code>signal_analysis.py</code>; telemetri AD620/ADC dihitung dari rumus repo.<br>
+    <em>Bukti:</em> <code>gui_app.py</code> (~750 baris), <code>hardware_sim.py</code>, <code>signal_generator.py</code>.
+  </div>
+
+  <h3>Peta: masalah GitHub → file solusi saya</h3>
+  <table>
+    <tr><th>Kebutuhan / gap di CuffnCode</th><th>Solusi saya</th><th>File</th></tr>
+    <tr>
+      <td>Roadmap notch 50 Hz</td>
+      <td>Filter IIR notch + verifikasi penurunan daya hum (FFT)</td>
+      <td><code>filters.py</code>, <code>signal_analysis.py</code></td>
+    </tr>
+    <tr>
+      <td>Evaluasi performa (roadmap)</td>
+      <td>Benchmark timing sequential / parallel / dynamic</td>
+      <td><code>parallel_pipeline.py</code></td>
+    </tr>
+    <tr>
+      <td>STM32 → Host (opsional UART)</td>
+      <td>Node A streaming batch + delay 50 ms seperti ADC real-time</td>
+      <td><code>distributed_nodes.py</code></td>
+    </tr>
+    <tr>
+      <td>Retrofitted pump + valve</td>
+      <td>Animasi fase inflate/hold/deflate + diagram blok aktif</td>
+      <td><code>hardware_sim.py</code>, <code>gui_app.py</code></td>
+    </tr>
+    <tr>
+      <td>Spesifikasi AD620 / TLC2272</td>
+      <td>Konstanta dihitung ulang; ditampilkan di log &amp; telemetri GUI</td>
+      <td><code>cuffncode_specs.py</code></td>
+    </tr>
+  </table>
+
+  <h3>Mengapa ini bukan copy-paste README GitHub?</h3>
+  <ul>
+    <li>Folder <code>Host-Simulation/</code> <strong>0 file</strong> di upstream — saya tambahkan seluruh isinya di fork.</li>
+    <li>Saya tidak mengambil teks paragraf README; saya menulis <strong>kode eksekusi</strong> + GUI + angka benchmark dari mesin saya.</li>
+    <li>Notch &amp; merge chunk adalah <strong>algoritma</strong>, bukan kutipan bullet “Next-to-Do”.</li>
+    <li>Saya membedakan <strong>referensi hardware</strong> (komponen dari repo) vs <strong>kontribusi kuliah</strong> (paralel, distributed, simulasi) — lihat tabel di atas.</li>
+    <li>Keputusan yang terlihat “saya pikir sendiri”: GUI tidak pakai <code>Pool</code> (animasi), benchmark pakai <code>Pool</code>; <code>filter_passes=12</code> untuk beban CPU; <code>seed=42</code> agar demo reproduksibel.</li>
+  </ul>
+
+  <p>
+    <strong>Ringkas satu kalimat untuk dosen:</strong>
+    <em>Saya melengkapi proyek CuffnCode dengan lapisan Host Python yang mengimplementasikan
+    hum-killer (roadmap), pemrosesan batch paralel, dan pipeline terdistribusi tiga node,
+    plus simulator GUI agar demonstrasi IFB 206 bisa tanpa hardware fisik.</em>
+  </p>
+
+  <!-- ========== CARA TUNJUKKAN ========== -->
+  <h2 id="demo">Cara menunjukkan sambil menjelaskan (untuk dosen / video)</h2>
+  <p>
+    Urutan di bawah ini bisa Anda ikuti saat presentasi, rekaman video, atau saat dosen membuka README + menjalankan program.
+    Setiap langkah: <strong>apa yang ditunjukkan</strong> → <strong>apa yang dijelaskan</strong> → <strong>bukti bahwa ini karya saya</strong>.
+  </p>
+
+  <h3>Langkah 1 — Bandingkan repo GitHub asli vs fork saya</h3>
+  <table>
+    <tr><th>Tunjukkan di layar</th><th>Jelaskan dengan kata-kata</th></tr>
+    <tr>
+      <td>
+        Buka
+        <a href="https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode">repo upstream</a>
+        → tab <strong>Code</strong> (hanya KiCad, TINA-TI, images, docs hardware)
+      </td>
+      <td>
+        “Ini proyek CuffnCode asli: fokus hardware. Di sini <strong>tidak ada</strong> folder
+        <code>Host-Simulation</code> dan tidak ada file Python untuk paralel atau distributed.”
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Buka
+        <a href="https://github.com/Farmil23/CuffnCode/tree/main/Host-Simulation">fork saya → Host-Simulation</a>
+      </td>
+      <td>
+        “Ini kontribusi saya untuk IFB 206: seluruh folder ini saya tambahkan — GUI, benchmark, filter, 3 node.”
+      </td>
+    </tr>
+    <tr>
+      <td>Halaman ini (GitHub Pages) + README di root fork</td>
+      <td>
+        “Dokumentasi menjelaskan <strong>masalah dari CuffnCode</strong> dan <strong>solusi kode</strong> saya,
+        bukan menyalin paragraf README hardware.”
+      </td>
+    </tr>
+  </table>
+
+  <h3>Langkah 2 — Terminal: bukti komputasi paralel (<code>main.py</code>)</h3>
+  <p><strong>Jalankan:</strong></p>
+  <pre>cd Host-Simulation
+pip install -r requirements.txt
+python main.py</pre>
+
+  <table>
+    <tr><th>Yang muncul di terminal</th><th>Apa yang saya jelaskan</th></tr>
+    <tr>
+      <td><code>Sequential : 0.34 s</code> … <code>Parallel : 1.49 s</code> … <code>speedup ~ 0.23x</code></td>
+      <td>
+        “Saya bandingkan tiga mode scheduling. Di Windows data kecil, paralel bisa lebih lambat karena overhead spawn —
+        saya <strong>tidak memalsukan</strong> angka speedup; yang penting pola <code>Pool.map</code> dan chunk sama benar.”
+      </td>
+    </tr>
+    <tr>
+      <td><code>Peak match (seq vs par): OK</code></td>
+      <td>
+        “Hasil filter paralel sama dengan sequential — membuktikan merge chunk dan worker saya benar.”
+      </td>
+    </tr>
+    <tr>
+      <td><code>[Node A | Acquisition]</code> … <code>[Node B | Processing] Batch 0..3</code> … <code>[Node C | Storage/UI]</code></td>
+      <td>
+        “Ini solusi distributed: tiga <strong>proses OS</strong> terpisah, komunikasi <code>Queue</code>,
+        memetakan STM32 stream → filter Host → tampilan BP demo — sesuai materi message passing.”
+      </td>
+    </tr>
+  </table>
+  <p><strong>Kaitkan ke CuffnCode:</strong> “Roadmap repo minta evaluasi performa — bagian timing ini jawaban saya; roadmap notch 50 Hz — diimplementasi di <code>filters.notch_50hz</code> yang dipanggil tiap chunk.”</p>
+
+  <h3>Langkah 3 — GUI: bukti simulator &amp; filter (<code>gui.py</code>)</h3>
+  <p><strong>Jalankan:</strong> <code>python gui.py</code> → klik <strong>Mulai Simulasi</strong>.</p>
+  <table>
+    <tr><th>Yang ditunjukkan di GUI</th><th>Apa yang saya jelaskan</th></tr>
+    <tr>
+      <td>Diagram: pump, 2 valve, sensor, AD620, TLC2272, STM32, Host, Node A/B/C menyala bergantian</td>
+      <td>“Saya buat state machine 11 fase mengikuti alur hardware CuffnCode — karena di kelas tidak bawa board.”</td>
+    </tr>
+    <tr>
+      <td>Grafik atas merah (SEBELUM) — gelombang 50 Hz terlihat</td>
+      <td>“Sinyal sintetis saya: envelope oscillometric + hum 3·sin(50 Hz) — masalah yang disebut di README CuffnCode.”</td>
+    </tr>
+    <tr>
+      <td>Grafik bawah hijau (SESUDAH) + panel <code>Hum 50Hz ↓ xx%</code></td>
+      <td>“Ini hasil filter Host saya; persentase dari FFT <code>signal_analysis.py</code>, bukan teks statis.”</td>
+    </tr>
+    <tr>
+      <td>Telemetri: Bridge mV, AD620, offset V, kode ADC</td>
+      <td>“Angka dari rumus gain AD620 dan divider TLC yang saya hitung di <code>cuffncode_specs.py</code> — referensi repo, perhitungan saya.”</td>
+    </tr>
+    <tr>
+      <td>Log: <code>Pool.map chunk 1/8</code> … <code>Node A/B/C</code></td>
+      <td>“Fase Host menunjukkan paralel per chunk dan alur distributed — sama konsepnya dengan <code>main.py</code>, divisualkan untuk demo.”</td>
+    </tr>
+  </table>
+
+  <h3>Langkah 4 — Tunjukkan file kunci (opsional, jika ditanya kode)</h3>
+  <table>
+    <tr><th>File di GitHub</th><th>Tunjukkan bagian ini</th><th>Jelaskan</th></tr>
+    <tr>
+      <td><code>filters.py</code></td>
+      <td>Loop <code>notch_50hz</code> per sampel</td>
+      <td>“Notch IIR saya tulis sendiri, bukan copy scipy.”</td>
+    </tr>
+    <tr>
+      <td><code>parallel_pipeline.py</code></td>
+      <td><code>Pool.map(process_chunk, …)</code> + <code>merge_chunks</code></td>
+      <td>“Data parallelism kuliah: task sama, data beda.”</td>
+    </tr>
+    <tr>
+      <td><code>distributed_nodes.py</code></td>
+      <td><code>Process</code> + <code>Queue.put/get</code></td>
+      <td>“Message passing antar node A/B/C.”</td>
+    </tr>
+    <tr>
+      <td><code>signal_generator.py</code></td>
+      <td>Baris <code>hum = 3.0 * sin(2*pi*50*t)</code></td>
+      <td>“Model gangguan saya definisikan untuk studi kasus.”</td>
+    </tr>
+  </table>
+
+  <h3>Langkah 5 — Checklist “bukan copy-paste” (baca sambil tunjuk)</h3>
+  <ol>
+    <li>Upstream: <strong>tidak ada</strong> <code>Host-Simulation/</code> → fork saya: <strong>ada</strong> + bisa di-run.</li>
+    <li>README upstream: bullet roadmap → saya: <strong>kode</strong> notch + benchmark + log node.</li>
+    <li>GUI menampilkan <strong>angka</strong> hum ↓% yang berubah tiap run (dari FFT), bukan screenshot template.</li>
+    <li>Terminal menampilkan speedup &lt; 1 jika memang lambat — <strong>jujur</strong>, bukan hasil plagiat template.</li>
+    <li>Dokumentasi ini + README menjelaskan <strong>masalah → solusi → file</strong> secara berurutan.</li>
+  </ol>
+
+  <div class="note">
+    <strong>Untuk video Instagram Lab (20–30 detik):</strong>
+    rekam Layar 3–5 detik: perbandingan repo upstream vs fork →
+    10 detik: GUI Mulai Simulasi (grafik SEBELUM/SESUDAH + hum ↓%) →
+    5 detik: terminal <code>Peak match: OK</code> + log Node B.
+  </div>
 
   <!-- ========== KONTRIBUSI ========== -->
-  <h2 id="kontribusi">1. Kontribusi &amp; keaslian kerja</h2>
+  <h2 id="kontribusi">1. Kontribusi &amp; keaslian kerja (detail teknis)</h2>
   <p>
     Repo upstream <a href="https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode">CuffnCode</a>
     berisi desain hardware (KiCad, TINA-TI, gambar prototipe). <strong>Seluruh folder
@@ -169,7 +501,7 @@
   <!-- ========== MODUL ========== -->
   <h2 id="modul">3. Modul yang saya implementasikan</h2>
 
-  <h3>3.1 <code>signal_generator.py</code> — model fisika + gangguan</h3>
+  <h3 id="sinyal">3.1 <code>signal_generator.py</code> — model fisika + gangguan</h3>
   <p>Saya menyusun sinyal sebagai superposisi komponen dengan makna oscillometric:</p>
   <pre>envelope = 80 * exp(-0.35*t) * (1 - exp(-2.5*t))   # kempisan cuff
 carrier  = 0.15 * sin(2π * 1.2 * t)                 # osilasi arteri
@@ -346,12 +678,13 @@ python main.py     # bukti terminal paralel + distributed</pre>
     </tr>
   </table>
 
-  <h2 id="tim">9. Tim, checklist EVALUASI 3, referensi</h2>
+  <h2 id="pelaksana">9. Pelaksana, checklist EVALUASI 3, referensi</h2>
+  <div class="impl">
+    <strong>Pelaksana tunggal:</strong> seluruh kode <code>Host-Simulation/</code>, GUI, benchmark, dan dokumentasi ini dikerjakan sendiri.
+  </div>
   <table>
-    <tr><th>Nama</th><th>NRP</th><th>Peran</th></tr>
-    <tr><td><strong>Farhan Kamil Hermansyah</strong></td><td>152024150</td><td>Implementasi seluruh Host-Simulation + dokumentasi ini</td></tr>
-    <tr><td>Ratu Qolbu Maziah</td><td>152024151</td><td>Tim kelas</td></tr>
-    <tr><td>Syafa Meisya Fitria</td><td>152024182</td><td>Tim kelas</td></tr>
+    <tr><th>Nama</th><th>NRP</th><th>Kelas</th><th>Peran</th></tr>
+    <tr><td><strong>Farhan Kamil Hermansyah</strong></td><td>152024150</td><td>CC</td><td>100% — implementasi &amp; dokumentasi</td></tr>
   </table>
   <table>
     <tr><th>Deliverable</th><th>Status</th></tr>
@@ -368,5 +701,47 @@ python main.py     # bukti terminal paralel + distributed</pre>
   </ul>
   <p><small>Estimasi BP demo — bukan diagnosis medis. MPS20N0040D: hindari over-pressure pada hardware nyata.</small></p>
 
+  <script>
+    (function () {
+      var links = document.querySelectorAll(".float-nav a[data-section]");
+      var sections = [];
+      links.forEach(function (a) {
+        var id = a.getAttribute("data-section");
+        var el = document.getElementById(id);
+        if (el) sections.push({ id: id, el: el, link: a });
+      });
+      function setActive(id) {
+        links.forEach(function (a) {
+          a.classList.toggle("active", a.getAttribute("data-section") === id);
+        });
+      }
+      links.forEach(function (a) {
+        a.addEventListener("click", function (e) {
+          var id = a.getAttribute("data-section");
+          var target = document.getElementById(id);
+          if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+            setActive(id);
+            history.replaceState(null, "", "#" + id);
+          }
+        });
+      });
+      var topBtn = document.getElementById("topBtn");
+      window.addEventListener("scroll", function () {
+        var y = window.scrollY;
+        topBtn.classList.toggle("visible", y > 400);
+        var current = sections[0] ? sections[0].id : "";
+        for (var i = 0; i < sections.length; i++) {
+          if (sections[i].el.offsetTop - 120 <= y) current = sections[i].id;
+        }
+        setActive(current);
+      }, { passive: true });
+      if (location.hash) {
+        var h = location.hash.slice(1);
+        setActive(h);
+      }
+    })();
+  </script>
 </body>
 </html>
