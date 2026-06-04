@@ -165,8 +165,9 @@ Nilai BP di GUI dan terminal **bukan** diagnosis medis.
 | Deliverable EVALUASI 3 | Lokasi |
 |------------------------|--------|
 | Kode + README | Folder ini + README root repo |
-| GitHub Pages | `/docs` pada repo root → [`docs/index.md`](../docs/index.md) |
-| Video demo GUI | Unggah ke Instagram Lab (20–30 detik) — GUI tidak berjalan di Pages |
+| GitHub Pages | `/docs` pada repo root → [`docs/index.html`](../docs/index.html) |
+| Video demo (Instagram) | [Reel](https://www.instagram.com/reel/DZK6f8TyS4B/?igsh=cGtibXh3azR0bGNv) |
+| Laporan + video (Google Drive) | [Folder EVALUASI_3](https://drive.google.com/drive/folders/1at-MlfVUXRxzlCIGZBBKLNQvKkVhnb4K?usp=sharing) |
 
 Detail arsitektur, diagram, dan checklist matkul: [`docs/index.md`](docs/index.md) dan [`../docs/index.md`](../docs/index.md).
 
