@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CuffnCode Host-Simulation — Dokumentasi Implementasi | IFB 206</title>
+  <title>Farhan Kamil — CuffnCode Host-Simulation | IFB 206 ITENAS</title>
+  <meta name="author" content="Farhan Kamil Hermansyah">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -44,30 +45,26 @@
       background: var(--bg);
       background-image:
         radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.15), transparent),
-        radial-gradient(ellipse 60% 40% at 100% 0%, rgba(99, 102, 241, 0.08), transparent);
+        radial-gradient(ellipse 50% 40% at 0% 50%, rgba(99, 102, 241, 0.06), transparent),
+        radial-gradient(ellipse 50% 40% at 100% 50%, rgba(99, 102, 241, 0.06), transparent);
       min-height: 100vh;
+      /* Grid: [kiri kosong] [konten] [nav] [kanan kosong] → konten benar-benar di tengah */
+      display: grid;
+      grid-template-columns: 1fr min(var(--content-max), calc(100% - 2rem)) var(--nav-width) 1fr;
+      column-gap: 1.5rem;
+      align-items: start;
+      padding: 2rem 0 5rem;
     }
     a { color: #60a5fa; text-decoration: none; transition: color 0.15s; }
     a:hover { color: #93c5fd; text-decoration: underline; }
-    /* Konten + nav sebagai satu blok di tengah layar */
-    .site-layout {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 2rem;
-      width: 100%;
-      max-width: calc(var(--content-max) + var(--nav-width) + 4rem);
-      margin: 0 auto;
-      padding: 2rem 1.25rem 5rem;
-    }
     .page {
-      flex: 1 1 auto;
+      grid-column: 2;
       width: 100%;
       max-width: var(--content-max);
       min-width: 0;
+      justify-self: center;
       margin: 0;
-      padding: 0;
+      padding: 0 0.25rem;
     }
     /* Hero */
     .hero {
@@ -101,6 +98,46 @@
       border-radius: 999px;
     }
     .badge--author { color: #86efac; background: var(--success-soft); border-color: rgba(34, 197, 94, 0.3); }
+    .author-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .author-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #6366f1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+    .author-meta { flex: 1; min-width: 0; }
+    .author-name {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .author-sub {
+      margin: 0.15rem 0 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+    .hero-tagline {
+      margin: 0 0 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+    }
     .hero h1 {
       margin: 0 0 0.75rem;
       font-size: clamp(1.6rem, 4vw, 2rem);
@@ -266,10 +303,10 @@
     }
     /* Side navigation */
     .side-nav {
-      flex: 0 0 var(--nav-width);
+      grid-column: 3;
       position: sticky;
       top: 2rem;
-      align-self: flex-start;
+      width: var(--nav-width);
       z-index: 100;
       background: rgba(15, 20, 28, 0.92);
       border: 1px solid var(--border-strong);
@@ -320,28 +357,46 @@
     }
     .side-nav a:hover .dot { background: var(--accent); transform: scale(1.3); }
     .side-nav a.active .dot { background: #fff; box-shadow: 0 0 8px rgba(255,255,255,0.5); }
-    @media (min-width: 1200px) {
+    .site-footer {
+      grid-column: 2;
+      max-width: var(--content-max);
+      justify-self: center;
+      width: 100%;
+      margin-top: 0;
+      padding: 1.5rem 0.25rem 0;
+      border-top: 1px solid var(--border-strong);
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+    .site-footer strong { color: var(--text); }
+    .site-footer a { font-weight: 500; }
+    @media (min-width: 1100px) {
       .side-nav {
-        width: var(--nav-width);
         max-height: calc(100vh - 4rem);
         overflow-y: auto;
       }
       .side-nav__links { padding: 0.25rem 0.6rem 0.75rem; }
     }
-    @media (max-width: 1199px) {
-      .site-layout {
-        flex-direction: column;
-        align-items: stretch;
-        max-width: var(--content-max);
-        padding-bottom: 6rem;
+    @media (max-width: 1099px) {
+      body {
+        grid-template-columns: 1fr;
+        padding: 1.5rem 1rem 6rem;
       }
+      .page {
+        grid-column: 1;
+        max-width: 720px;
+        margin: 0 auto;
+        justify-self: center;
+      }
+      .site-footer { grid-column: 1; max-width: 720px; margin-left: auto; margin-right: auto; }
       .side-nav {
+        grid-column: 1;
         position: fixed;
         left: 50%;
         bottom: 1rem;
         top: auto;
         transform: translateX(-50%);
-        flex: none;
         width: auto;
         max-width: calc(100vw - 2rem);
         z-index: 1000;
@@ -380,8 +435,10 @@
     }
     .top-link.visible { opacity: 1; pointer-events: auto; }
     .top-link:hover { transform: translateY(-2px); text-decoration: none; color: #fff; }
-    @media (max-width: 1199px) {
-      .top-link { bottom: 5.5rem; right: 1rem; }
+    @media (max-width: 1099px) {
+      .top-link { bottom: 5.5rem; left: 50%; right: auto; transform: translateX(-50%); }
+      .top-link.visible { transform: translateX(-50%); }
+      .top-link:hover { transform: translateX(-50%) translateY(-2px); }
     }
   </style>
 </head>
@@ -389,33 +446,40 @@
 
   <a href="#atas" class="top-link" id="topBtn" aria-label="Kembali ke atas">↑</a>
 
-  <div class="site-layout">
   <main class="page" id="atas">
     <header class="hero">
+      <div class="author-row">
+        <div class="author-avatar" aria-hidden="true">FK</div>
+        <div class="author-meta">
+          <p class="hero-tagline">Dokumentasi tugas saya · IFB 206</p>
+          <p class="author-name">Farhan Kamil Hermansyah</p>
+          <p class="author-sub">NRP 152024150 · Teknik Informatika CC · ITENAS · Semester Genap 2025/2026</p>
+        </div>
+      </div>
       <div class="hero__badges">
-        <span class="badge">IFB 206</span>
+        <span class="badge">Komputasi Paralel</span>
         <span class="badge">EVALUASI 3</span>
-        <span class="badge">ITENAS 2025/2026</span>
-        <span class="badge badge--author">Farhan Kamil · 152024150</span>
+        <span class="badge">Host-Simulation</span>
       </div>
       <h1>CuffnCode — Host Simulation</h1>
       <p class="hero__lead">
-        Dokumentasi <strong>implementasi asli</strong> pada
-        <a href="https://github.com/Farmil23/CuffnCode">Farmil23/CuffnCode</a> —
-        masalah dari proyek CuffnCode, solusi kode saya, dan panduan demo untuk penilaian IFB 206.
+        Halo, ini halaman dokumentasi <strong>proyek yang saya kerjakan sendiri</strong> untuk mata kuliah Komputasi Paralel.
+        Saya fork <a href="https://github.com/Farmil23/CuffnCode">CuffnCode</a> lalu menambah modul Python
+        <code>Host-Simulation/</code> — di sini saya jelaskan masalah dari proyek CuffnCode, solusi yang saya kode,
+        dan cara menjalankannya saat demo ke dosen.
       </p>
       <div class="alert alert--warn">
         <span class="alert__icon" aria-hidden="true">⚠</span>
         <div>
-          <strong>GUI tidak berjalan di halaman web</strong>
-          Jalankan <code>python gui.py</code> di laptop (Tkinter). Untuk bukti visual: rekam layar atau video Instagram Lab.
+          <strong>Catatan dari saya</strong>
+          GUI hanya jalan di laptop (<code>python gui.py</code>), tidak di browser. Saya rekam layar untuk video Instagram Lab.
         </div>
       </div>
-      <p class="nav-hint">Klik panel <strong>Navigasi</strong> di samping konten (desktop) atau di bawah layar (HP) untuk loncat ke bagian.</p>
+      <p class="nav-hint">Gunakan <strong>daftar isi</strong> di kanan (desktop) atau bawah (HP) untuk loncat ke bagian.</p>
     </header>
 
   <!-- ========== SOLUSI ========== -->
-  <h2 id="solusi">Solusi yang saya buat — dari masalah CuffnCode (GitHub)</h2>
+  <h2 id="solusi">Solusi yang saya buat (berdasarkan CuffnCode GitHub)</h2>
   <p>
     Repo <a href="https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode">CuffnCode resmi</a>
     fokus ke <strong>hardware</strong>: sensor bridge, AFE (AD620+TLC2272), STM32F411, pompa &amp; valve, simulasi TINA-TI/KiCad.
@@ -439,7 +503,7 @@
     <li><strong>Sinyal cuff lemah + hum 50 Hz</strong> — README menyebut noise USB/PLN; roadmap minta notch, tapi belum ada implementasi.</li>
     <li><strong>Batch sampel ADC besar</strong> — setelah STM32 streaming ke PC, filter envelope akan CPU-heavy; perlu pola <em>data parallel</em>.</li>
     <li><strong>Subsistem terpisah secara fisik</strong> — sensor/MCU/PC bisa dimodelkan sebagai node berbeda → materi <em>sistem terdistribusi</em>.</li>
-    <li><strong>Demo kuliah tanpa board</strong> — mahasiswa harus menunjukkan alur inflate→deflate→filter tanpa membawa hardware ke kelas.</li>
+    <li><strong>Demo kuliah tanpa board</strong> — saya perlu menunjukkan alur inflate→deflate→filter tanpa membawa hardware ke kelas.</li>
   </ol>
 
   <h3>Tiga solusi yang saya implementasikan sendiri</h3>
@@ -513,10 +577,10 @@
   </div>
 
   <!-- ========== CARA TUNJUKKAN ========== -->
-  <h2 id="demo">Cara menunjukkan sambil menjelaskan (untuk dosen / video)</h2>
+  <h2 id="demo">Cara saya menunjukkan ke dosen (panduan demo)</h2>
   <p>
-    Urutan di bawah ini bisa Anda ikuti saat presentasi, rekaman video, atau saat dosen membuka README + menjalankan program.
-    Setiap langkah: <strong>apa yang ditunjukkan</strong> → <strong>apa yang dijelaskan</strong> → <strong>bukti bahwa ini karya saya</strong>.
+    Ini urutan yang <strong>saya pakai</strong> saat presentasi atau rekam video.
+    Tiap langkah: apa yang saya tunjukkan di layar → apa yang saya jelaskan dengan kata-kata.
   </p>
 
   <h3>Langkah 1 — Bandingkan repo GitHub asli vs fork saya</h3>
@@ -927,10 +991,11 @@ python main.py     # bukti terminal paralel + distributed</pre>
     </tr>
   </table></div>
 
-  <h2 id="pelaksana">9. Pelaksana, checklist EVALUASI 3, referensi</h2>
+  <h2 id="pelaksana">9. Tentang saya &amp; checklist tugas</h2>
   <div class="card card--success">
-    <strong>Pelaksana tunggal</strong>
-    Seluruh kode <code>Host-Simulation/</code>, GUI, benchmark, dan dokumentasi ini dikerjakan sendiri oleh Farhan Kamil Hermansyah.
+    <strong>Farhan Kamil Hermansyah — pelaksana tunggal</strong>
+    Saya yang menulis seluruh kode <code>Host-Simulation/</code>, GUI, benchmark, dan halaman dokumentasi ini.
+    Fork GitHub: <a href="https://github.com/Farmil23/CuffnCode">Farmil23/CuffnCode</a>.
   </div>
   <div class="tbl-wrap"><table class="tbl">
     <tr><th>Nama</th><th>NRP</th><th>Kelas</th><th>Peran</th></tr>
@@ -949,12 +1014,12 @@ python main.py     # bukti terminal paralel + distributed</pre>
     <li><a href="https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode">CuffnCode hardware (upstream)</a></li>
     <li><a href="https://publish.obsidian.md/auralius/Published/CuffnCode">Obsidian — desain</a></li>
   </ul>
-  <p class="footer-note">Estimasi BP demo — bukan diagnosis medis. MPS20N0040D: hindari over-pressure pada hardware nyata.</p>
+  <p class="footer-note">Estimasi BP pada simulasi saya hanya untuk demo kuliah — bukan diagnosis medis.</p>
 
   </main>
 
-  <nav class="side-nav float-nav" aria-label="Navigasi bagian">
-    <span class="side-nav__title">Navigasi</span>
+  <nav class="side-nav float-nav" aria-label="Daftar isi dokumentasi Farhan">
+    <span class="side-nav__title">Daftar isi</span>
     <div class="side-nav__links">
       <a href="#atas" data-section="atas"><span class="dot"></span><span class="label">Awal</span></a>
       <a href="#solusi" data-section="solusi"><span class="dot"></span><span class="label">Solusi</span></a>
@@ -970,7 +1035,12 @@ python main.py     # bukti terminal paralel + distributed</pre>
       <a href="#pelaksana" data-section="pelaksana"><span class="dot"></span><span class="label">Pelaksana</span></a>
     </div>
   </nav>
-  </div>
+
+  <footer class="site-footer">
+    <strong>Farhan Kamil Hermansyah</strong> · NRP 152024150 · ITENAS CC<br>
+    IFB 206 Komputasi Paralel — EVALUASI 3 · Semester Genap 2025/2026<br>
+    <a href="https://github.com/Farmil23/CuffnCode">github.com/Farmil23/CuffnCode</a>
+  </footer>
 
   <script>
     (function () {
