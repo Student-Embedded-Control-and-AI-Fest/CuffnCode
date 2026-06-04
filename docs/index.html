@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farhan Kamil — CuffnCode Host-Simulation | IFB 206 ITENAS</title>
+  <meta name="author" content="Farhan Kamil Hermansyah">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080b10;
+      --bg-elevated: #0f1419;
+      --surface: #151b24;
+      --surface-hover: #1c2430;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.12);
+      --text: #f0f4f8;
+      --text-secondary: #9ca8b8;
+      --accent: #3b82f6;
+      --accent-soft: rgba(59, 130, 246, 0.12);
+      --accent-glow: rgba(59, 130, 246, 0.35);
+      --success: #22c55e;
+      --success-soft: rgba(34, 197, 94, 0.1);
+      --warn-bg: #1a1608;
+      --warn-border: rgba(234, 179, 8, 0.45);
+      --warn-text: #fde68a;
+      --radius: 12px;
+      --radius-lg: 16px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --font: "Inter", system-ui, -apple-system, sans-serif;
+      --mono: "JetBrains Mono", Consolas, monospace;
+      --content-max: 760px;
+      --nav-width: 200px;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.15), transparent),
+        radial-gradient(ellipse 50% 40% at 0% 50%, rgba(99, 102, 241, 0.06), transparent),
+        radial-gradient(ellipse 50% 40% at 100% 50%, rgba(99, 102, 241, 0.06), transparent);
+      min-height: 100vh;
+      /* Grid: [kiri kosong] [konten] [nav] [kanan kosong] → konten benar-benar di tengah */
+      display: grid;
+      grid-template-columns: 1fr min(var(--content-max), calc(100% - 2rem)) var(--nav-width) 1fr;
+      column-gap: 1.5rem;
+      align-items: start;
+      padding: 2rem 0 5rem;
+    }
+    a { color: #60a5fa; text-decoration: none; transition: color 0.15s; }
+    a:hover { color: #93c5fd; text-decoration: underline; }
+    .page {
+      grid-column: 2;
+      width: 100%;
+      max-width: var(--content-max);
+      min-width: 0;
+      justify-self: center;
+      margin: 0;
+      padding: 0 0.25rem;
+    }
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--bg-elevated) 100%);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 2rem 2rem 1.75rem;
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), #6366f1, var(--accent));
+    }
+    .hero__badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: #93c5fd;
+      background: var(--accent-soft);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 999px;
+    }
+    .badge--author { color: #86efac; background: var(--success-soft); border-color: rgba(34, 197, 94, 0.3); }
+    .author-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .author-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #6366f1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+    .author-meta { flex: 1; min-width: 0; }
+    .author-name {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .author-sub {
+      margin: 0.15rem 0 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+    .hero-tagline {
+      margin: 0 0 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+    }
+    .hero h1 {
+      margin: 0 0 0.75rem;
+      font-size: clamp(1.6rem, 4vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero__lead { margin: 0 0 1.25rem; font-size: 1rem; color: var(--text-secondary); max-width: 52ch; }
+    .hero__lead strong { color: var(--text); font-weight: 600; }
+    .nav-hint {
+      margin: 1rem 0 0;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      background: var(--bg-elevated);
+      border-radius: var(--radius);
+      border: 1px dashed var(--border-strong);
+    }
+    .nav-hint strong { color: var(--accent); font-weight: 600; }
+    /* Alerts */
+    .alert {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      padding: 1rem 1.15rem;
+      border-radius: var(--radius);
+      margin: 1rem 0 0;
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+    .alert--warn {
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-border);
+      color: var(--warn-text);
+    }
+    .alert--warn strong { color: #fef08a; display: block; margin-bottom: 0.25rem; }
+    .alert__icon { font-size: 1.1rem; flex-shrink: 0; opacity: 0.9; }
+    /* Typography */
+    h2 {
+      margin: 2.75rem 0 1rem;
+      padding-bottom: 0.6rem;
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      border-bottom: 1px solid var(--border-strong);
+    }
+    h2::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 1.1em;
+      margin-right: 0.6rem;
+      vertical-align: -0.15em;
+      background: linear-gradient(180deg, var(--accent), #6366f1);
+      border-radius: 2px;
+    }
+    h3 {
+      margin: 1.5rem 0 0.65rem;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+    p { margin: 0 0 1rem; color: var(--text-secondary); }
+    p strong, li strong { color: var(--text); font-weight: 600; }
+    ol, ul { margin: 0 0 1rem; padding-left: 1.35rem; color: var(--text-secondary); }
+    li { margin: 0.4rem 0; }
+    li::marker { color: var(--accent); }
+    .author { color: var(--success); font-weight: 600; }
+    h2[id], h3[id] { scroll-margin-top: 2rem; }
+    /* Code */
+    code {
+      font-family: var(--mono);
+      font-size: 0.84em;
+      padding: 0.15em 0.45em;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: #7dd3fc;
+    }
+    pre {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      line-height: 1.55;
+      padding: 1.15rem 1.25rem;
+      margin: 1rem 0;
+      background: #0a0d12;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      overflow-x: auto;
+      color: #cbd5e1;
+    }
+    /* Tables */
+    .tbl-wrap { overflow-x: auto; margin: 1rem 0 1.25rem; border-radius: var(--radius); border: 1px solid var(--border-strong); }
+    table.tbl {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      margin: 0;
+    }
+    table.tbl thead { background: var(--surface); }
+    table.tbl th {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-strong);
+    }
+    table.tbl td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      vertical-align: top;
+    }
+    table.tbl tbody tr:last-child td { border-bottom: none; }
+    table.tbl tbody tr:hover td { background: var(--surface-hover); }
+    table.tbl td strong { color: var(--text); }
+    /* Cards */
+    .solution-grid { display: grid; gap: 1rem; margin: 1.25rem 0; }
+    @media (min-width: 700px) { .solution-grid { grid-template-columns: 1fr; } }
+    .card {
+      padding: 1.15rem 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { border-color: rgba(59, 130, 246, 0.3); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25); }
+    .card strong { color: var(--text); display: block; margin-bottom: 0.5rem; font-size: 0.95rem; }
+    .card--success { border-left: 3px solid var(--success); background: linear-gradient(90deg, var(--success-soft), var(--surface) 40%); }
+    .card--success strong { color: #86efac; }
+    .card em { color: #94a3b8; font-style: normal; font-size: 0.82rem; }
+    .impl { /* legacy alias */ }
+    .quote-box {
+      margin: 1.5rem 0;
+      padding: 1.15rem 1.35rem;
+      background: var(--accent-soft);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+    .quote-box strong { color: var(--text); font-style: normal; }
+    .footer-note {
+      display: block;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      opacity: 0.85;
+    }
+    /* Side navigation */
+    .side-nav {
+      grid-column: 3;
+      position: sticky;
+      top: 2rem;
+      width: var(--nav-width);
+      z-index: 100;
+      background: rgba(15, 20, 28, 0.92);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .side-nav__title {
+      display: block;
+      padding: 0.65rem 1rem 0.35rem;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-secondary);
+    }
+    .side-nav__links { display: flex; flex-direction: column; gap: 2px; padding: 0.35rem 0.5rem 0.65rem; }
+    .side-nav a {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.45rem 0.75rem;
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-weight: 500;
+      border-radius: 8px;
+      transition: all 0.18s ease;
+    }
+    .side-nav a:hover {
+      color: var(--text);
+      background: var(--surface-hover);
+      text-decoration: none;
+    }
+    .side-nav a.active {
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), #4f46e5);
+      box-shadow: 0 2px 12px var(--accent-glow);
+    }
+    .side-nav .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-strong);
+      flex-shrink: 0;
+      transition: transform 0.18s, background 0.18s;
+    }
+    .side-nav a:hover .dot { background: var(--accent); transform: scale(1.3); }
+    .side-nav a.active .dot { background: #fff; box-shadow: 0 0 8px rgba(255,255,255,0.5); }
+    .site-footer {
+      grid-column: 2;
+      max-width: var(--content-max);
+      justify-self: center;
+      width: 100%;
+      margin-top: 0;
+      padding: 1.5rem 0.25rem 0;
+      border-top: 1px solid var(--border-strong);
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+    .site-footer strong { color: var(--text); }
+    .site-footer a { font-weight: 500; }
+    @media (min-width: 1100px) {
+      .side-nav {
+        max-height: calc(100vh - 4rem);
+        overflow-y: auto;
+      }
+      .side-nav__links { padding: 0.25rem 0.6rem 0.75rem; }
+    }
+    @media (max-width: 1099px) {
+      body {
+        grid-template-columns: 1fr;
+        padding: 1.5rem 1rem 6rem;
+      }
+      .page {
+        grid-column: 1;
+        max-width: 720px;
+        margin: 0 auto;
+        justify-self: center;
+      }
+      .site-footer { grid-column: 1; max-width: 720px; margin-left: auto; margin-right: auto; }
+      .side-nav {
+        grid-column: 1;
+        position: fixed;
+        left: 50%;
+        bottom: 1rem;
+        top: auto;
+        transform: translateX(-50%);
+        width: auto;
+        max-width: calc(100vw - 2rem);
+        z-index: 1000;
+      }
+      .side-nav__title { display: none; }
+      .side-nav__links {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.35rem;
+        padding: 0.5rem 0.65rem;
+      }
+      .side-nav a { padding: 0.4rem 0.65rem; font-size: 0.72rem; }
+      .side-nav .label { display: none; }
+    }
+    .top-link {
+      position: fixed;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      z-index: 999;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #4f46e5);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 1.15rem;
+      font-weight: 600;
+      box-shadow: 0 4px 20px var(--accent-glow);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s, transform 0.25s;
+    }
+    .top-link.visible { opacity: 1; pointer-events: auto; }
+    .top-link:hover { transform: translateY(-2px); text-decoration: none; color: #fff; }
+    @media (max-width: 1099px) {
+      .top-link { bottom: 5.5rem; left: 50%; right: auto; transform: translateX(-50%); }
+      .top-link.visible { transform: translateX(-50%); }
+      .top-link:hover { transform: translateX(-50%) translateY(-2px); }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="#atas" class="top-link" id="topBtn" aria-label="Kembali ke atas">↑</a>
+
+  <main class="page" id="atas">
+    <header class="hero">
+      <div class="author-row">
+        <div class="author-avatar" aria-hidden="true">FK</div>
+        <div class="author-meta">
+          <p class="hero-tagline">Dokumentasi tugas saya · IFB 206</p>
+          <p class="author-name">Farhan Kamil Hermansyah</p>
+          <p class="author-sub">NRP 152024150 · Teknik Informatika CC · ITENAS · Semester Genap 2025/2026</p>
+        </div>
+      </div>
+      <div class="hero__badges">
+        <span class="badge">Komputasi Paralel</span>
+        <span class="badge">EVALUASI 3</span>
+        <span class="badge">Host-Simulation</span>
+      </div>
+      <h1>CuffnCode — Host Simulation</h1>
+      <p class="hero__lead">
+        Halo, ini halaman dokumentasi <strong>proyek yang saya kerjakan sendiri</strong> untuk mata kuliah Komputasi Paralel.
+        Saya fork <a href="https://github.com/Farmil23/CuffnCode">CuffnCode</a> lalu menambah modul Python
+        <code>Host-Simulation/</code> — di sini saya jelaskan masalah dari proyek CuffnCode, solusi yang saya kode,
+        dan cara menjalankannya saat demo ke dosen.
+      </p>
+      <div class="alert alert--warn">
+        <span class="alert__icon" aria-hidden="true">⚠</span>
+        <div>
+          <strong>Catatan dari saya</strong>
+          GUI hanya jalan di laptop (<code>python gui.py</code>), tidak di browser. Saya rekam layar untuk video Instagram Lab.
+        </div>
+      </div>
+      <p class="nav-hint">Gunakan <strong>daftar isi</strong> di kanan (desktop) atau bawah (HP) untuk loncat ke bagian.</p>
+    </header>
+
+  <!-- ========== SOLUSI ========== -->
+  <h2 id="solusi">Solusi yang saya buat (berdasarkan CuffnCode GitHub)</h2>
+  <p>
+    Repo <a href="https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode">CuffnCode resmi</a>
+    fokus ke <strong>hardware</strong>: sensor bridge, AFE (AD620+TLC2272), STM32F411, pompa &amp; valve, simulasi TINA-TI/KiCad.
+    <strong>Tidak ada</strong> kode Python, pipeline Host, atau demo komputasi paralel di repo tersebut.
+    Tugas saya di IFB 206: menambahkan <strong>lapisan perangkat lunak Host</strong> yang menjawab kebutuhan proyek CuffnCode
+    <em>sekaligus</em> memenuhi materi paralel &amp; terdistribusi — tanpa menyalin README upstream.
+  </p>
+
+  <h3>Apa yang sudah ada di GitHub CuffnCode (bukan karya saya)</h3>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>Isi repo upstream</th><th>Status</th></tr>
+    <tr><td>Desain AFE, gain AD620, offset TLC2272</td><td>Dokumentasi + TINA-TI</td></tr>
+    <tr><td>Sensor MPS20N0040D, prototipe Black Pill</td><td>Gambar + penjelasan</td></tr>
+    <tr><td>Pompa DC + 2 solenoid valve (inflate/deflate)</td><td>Diagram / Obsidian</td></tr>
+    <tr><td>Roadmap: <em>50/60 Hz notch</em>, PCB, evaluasi performa</td><td>Daftar rencana — <strong>belum dikodekan</strong></td></tr>
+    <tr><td>Folder <code>Host-Simulation/</code>, <code>parallel_pipeline.py</code>, GUI Python</td><td><strong>Tidak ada</strong></td></tr>
+  </table></div>
+
+  <h3>Masalah yang saya ambil dari konteks proyek itu</h3>
+  <ol>
+    <li><strong>Sinyal cuff lemah + hum 50 Hz</strong> — README menyebut noise USB/PLN; roadmap minta notch, tapi belum ada implementasi.</li>
+    <li><strong>Batch sampel ADC besar</strong> — setelah STM32 streaming ke PC, filter envelope akan CPU-heavy; perlu pola <em>data parallel</em>.</li>
+    <li><strong>Subsistem terpisah secara fisik</strong> — sensor/MCU/PC bisa dimodelkan sebagai node berbeda → materi <em>sistem terdistribusi</em>.</li>
+    <li><strong>Demo kuliah tanpa board</strong> — saya perlu menunjukkan alur inflate→deflate→filter tanpa membawa hardware ke kelas.</li>
+  </ol>
+
+  <h3>Tiga solusi yang saya implementasikan sendiri</h3>
+  <div class="solution-grid">
+
+  <div class="card card--success impl">
+    <strong>Solusi 1 — Pipeline filter paralel di Host (data parallelism)</strong><br>
+    <em>Masalah CuffnCode:</em> hum killer &amp; pemrosesan sinyal belum ada di firmware; Host akan menerima ribuan sampel.<br>
+    <em>Yang saya buat:</em> memecah waveform jadi chunk → tiap chunk melalui <code>moving_average</code> + <code>notch_50hz</code> (IIR saya tulis sendiri) → <code>Pool.map</code> → merge terindeks.<br>
+    <em>Bukti:</em> <code>parallel_pipeline.py</code>, <code>filters.py</code> — benchmark mencetak waktu sequential/parallel <strong>jujur</strong> (termasuk speedup &lt; 1 di Windows).
+  </div>
+
+  <div class="card card--success impl">
+    <strong>Solusi 2 — Arsitektur terdistribusi A → B → C (message passing)</strong><br>
+    <em>Masalah CuffnCode:</em> platform “overinstrumented” punya rantai: acquisition di MCU, DSP bisa di Host, tampilan BP di UI.<br>
+    <em>Yang saya buat:</em> tiga <code>Process</code> terpisah — A mengirim batch <code>{"type":"samples"}</code>, B memfilter &amp; mengirim peaks, C mengagregasi estimasi BP demo — semua lewat <code>Queue</code>, bukan variabel global.<br>
+    <em>Bukti:</em> <code>distributed_nodes.py</code> — log <code>[Node A|B|C]</code> saat <code>python main.py</code>.
+  </div>
+
+  <div class="card card--success impl">
+    <strong>Solusi 3 — Simulator software + GUI edukatif (tanpa hardware)</strong><br>
+    <em>Masalah CuffnCode:</em> repo hanya foto/skema; tidak ada cara interaktif melihat efek filter pada oscillometric deflate.<br>
+    <em>Yang saya buat:</em> generator envelope+hum sintetis; state machine 11 fase (pump/valve/sensor/AFE/STM32/Host); grafik SEBELUM/SESUDAH; metrik FFT hum ↓% di <code>signal_analysis.py</code>; telemetri AD620/ADC dihitung dari rumus repo.<br>
+    <em>Bukti:</em> <code>gui_app.py</code> (~750 baris), <code>hardware_sim.py</code>, <code>signal_generator.py</code>.
+  </div>
+  </div>
+
+  <h3>Peta: masalah GitHub → file solusi saya</h3>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>Kebutuhan / gap di CuffnCode</th><th>Solusi saya</th><th>File</th></tr>
+    <tr>
+      <td>Roadmap notch 50 Hz</td>
+      <td>Filter IIR notch + verifikasi penurunan daya hum (FFT)</td>
+      <td><code>filters.py</code>, <code>signal_analysis.py</code></td>
+    </tr>
+    <tr>
+      <td>Evaluasi performa (roadmap)</td>
+      <td>Benchmark timing sequential / parallel / dynamic</td>
+      <td><code>parallel_pipeline.py</code></td>
+    </tr>
+    <tr>
+      <td>STM32 → Host (opsional UART)</td>
+      <td>Node A streaming batch + delay 50 ms seperti ADC real-time</td>
+      <td><code>distributed_nodes.py</code></td>
+    </tr>
+    <tr>
+      <td>Retrofitted pump + valve</td>
+      <td>Animasi fase inflate/hold/deflate + diagram blok aktif</td>
+      <td><code>hardware_sim.py</code>, <code>gui_app.py</code></td>
+    </tr>
+    <tr>
+      <td>Spesifikasi AD620 / TLC2272</td>
+      <td>Konstanta dihitung ulang; ditampilkan di log &amp; telemetri GUI</td>
+      <td><code>cuffncode_specs.py</code></td>
+    </tr>
+  </table></div>
+
+  <h3>Mengapa ini bukan copy-paste README GitHub?</h3>
+  <ul>
+    <li>Folder <code>Host-Simulation/</code> <strong>0 file</strong> di upstream — saya tambahkan seluruh isinya di fork.</li>
+    <li>Saya tidak mengambil teks paragraf README; saya menulis <strong>kode eksekusi</strong> + GUI + angka benchmark dari mesin saya.</li>
+    <li>Notch &amp; merge chunk adalah <strong>algoritma</strong>, bukan kutipan bullet “Next-to-Do”.</li>
+    <li>Saya membedakan <strong>referensi hardware</strong> (komponen dari repo) vs <strong>kontribusi kuliah</strong> (paralel, distributed, simulasi) — lihat tabel di atas.</li>
+    <li>Keputusan yang terlihat “saya pikir sendiri”: GUI tidak pakai <code>Pool</code> (animasi), benchmark pakai <code>Pool</code>; <code>filter_passes=12</code> untuk beban CPU; <code>seed=42</code> agar demo reproduksibel.</li>
+  </ul>
+
+  <div class="quote-box">
+    <strong>Ringkas untuk dosen:</strong>
+    <em>Saya melengkapi proyek CuffnCode dengan lapisan Host Python: hum-killer (roadmap),
+    pemrosesan batch paralel, pipeline terdistribusi tiga node, dan simulator GUI tanpa hardware fisik.</em>
+  </div>
+
+  <!-- ========== CARA TUNJUKKAN ========== -->
+  <h2 id="demo">Cara saya menunjukkan ke dosen (panduan demo)</h2>
+  <p>
+    Ini urutan yang <strong>saya pakai</strong> saat presentasi atau rekam video.
+    Tiap langkah: apa yang saya tunjukkan di layar → apa yang saya jelaskan dengan kata-kata.
+  </p>
+
+  <h3>Langkah 1 — Bandingkan repo GitHub asli vs fork saya</h3>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>Tunjukkan di layar</th><th>Jelaskan dengan kata-kata</th></tr>
+    <tr>
+      <td>
+        Buka
+        <a href="https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode">repo upstream</a>
+        → tab <strong>Code</strong> (hanya KiCad, TINA-TI, images, docs hardware)
+      </td>
+      <td>
+        “Ini proyek CuffnCode asli: fokus hardware. Di sini <strong>tidak ada</strong> folder
+        <code>Host-Simulation</code> dan tidak ada file Python untuk paralel atau distributed.”
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Buka
+        <a href="https://github.com/Farmil23/CuffnCode/tree/main/Host-Simulation">fork saya → Host-Simulation</a>
+      </td>
+      <td>
+        “Ini kontribusi saya untuk IFB 206: seluruh folder ini saya tambahkan — GUI, benchmark, filter, 3 node.”
+      </td>
+    </tr>
+    <tr>
+      <td>Halaman ini (GitHub Pages) + README di root fork</td>
+      <td>
+        “Dokumentasi menjelaskan <strong>masalah dari CuffnCode</strong> dan <strong>solusi kode</strong> saya,
+        bukan menyalin paragraf README hardware.”
+      </td>
+    </tr>
+  </table></div>
+
+  <h3>Langkah 2 — Terminal: bukti komputasi paralel (<code>main.py</code>)</h3>
+  <p><strong>Jalankan:</strong></p>
+  <pre>cd Host-Simulation
+pip install -r requirements.txt
+python main.py</pre>
+
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>Yang muncul di terminal</th><th>Apa yang saya jelaskan</th></tr>
+    <tr>
+      <td><code>Sequential : 0.34 s</code> … <code>Parallel : 1.49 s</code> … <code>speedup ~ 0.23x</code></td>
+      <td>
+        “Saya bandingkan tiga mode scheduling. Di Windows data kecil, paralel bisa lebih lambat karena overhead spawn —
+        saya <strong>tidak memalsukan</strong> angka speedup; yang penting pola <code>Pool.map</code> dan chunk sama benar.”
+      </td>
+    </tr>
+    <tr>
+      <td><code>Peak match (seq vs par): OK</code></td>
+      <td>
+        “Hasil filter paralel sama dengan sequential — membuktikan merge chunk dan worker saya benar.”
+      </td>
+    </tr>
+    <tr>
+      <td><code>[Node A | Acquisition]</code> … <code>[Node B | Processing] Batch 0..3</code> … <code>[Node C | Storage/UI]</code></td>
+      <td>
+        “Ini solusi distributed: tiga <strong>proses OS</strong> terpisah, komunikasi <code>Queue</code>,
+        memetakan STM32 stream → filter Host → tampilan BP demo — sesuai materi message passing.”
+      </td>
+    </tr>
+  </table></div>
+  <p><strong>Kaitkan ke CuffnCode:</strong> “Roadmap repo minta evaluasi performa — bagian timing ini jawaban saya; roadmap notch 50 Hz — diimplementasi di <code>filters.notch_50hz</code> yang dipanggil tiap chunk.”</p>
+
+  <h3>Langkah 3 — GUI: bukti simulator &amp; filter (<code>gui.py</code>)</h3>
+  <p><strong>Jalankan:</strong> <code>python gui.py</code> → klik <strong>Mulai Simulasi</strong>.</p>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>Yang ditunjukkan di GUI</th><th>Apa yang saya jelaskan</th></tr>
+    <tr>
+      <td>Diagram: pump, 2 valve, sensor, AD620, TLC2272, STM32, Host, Node A/B/C menyala bergantian</td>
+      <td>“Saya buat state machine 11 fase mengikuti alur hardware CuffnCode — karena di kelas tidak bawa board.”</td>
+    </tr>
+    <tr>
+      <td>Grafik atas merah (SEBELUM) — gelombang 50 Hz terlihat</td>
+      <td>“Sinyal sintetis saya: envelope oscillometric + hum 3·sin(50 Hz) — masalah yang disebut di README CuffnCode.”</td>
+    </tr>
+    <tr>
+      <td>Grafik bawah hijau (SESUDAH) + panel <code>Hum 50Hz ↓ xx%</code></td>
+      <td>“Ini hasil filter Host saya; persentase dari FFT <code>signal_analysis.py</code>, bukan teks statis.”</td>
+    </tr>
+    <tr>
+      <td>Telemetri: Bridge mV, AD620, offset V, kode ADC</td>
+      <td>“Angka dari rumus gain AD620 dan divider TLC yang saya hitung di <code>cuffncode_specs.py</code> — referensi repo, perhitungan saya.”</td>
+    </tr>
+    <tr>
+      <td>Log: <code>Pool.map chunk 1/8</code> … <code>Node A/B/C</code></td>
+      <td>“Fase Host menunjukkan paralel per chunk dan alur distributed — sama konsepnya dengan <code>main.py</code>, divisualkan untuk demo.”</td>
+    </tr>
+  </table></div>
+
+  <h3>Langkah 4 — Tunjukkan file kunci (opsional, jika ditanya kode)</h3>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>File di GitHub</th><th>Tunjukkan bagian ini</th><th>Jelaskan</th></tr>
+    <tr>
+      <td><code>filters.py</code></td>
+      <td>Loop <code>notch_50hz</code> per sampel</td>
+      <td>“Notch IIR saya tulis sendiri, bukan copy scipy.”</td>
+    </tr>
+    <tr>
+      <td><code>parallel_pipeline.py</code></td>
+      <td><code>Pool.map(process_chunk, …)</code> + <code>merge_chunks</code></td>
+      <td>“Data parallelism kuliah: task sama, data beda.”</td>
+    </tr>
+    <tr>
+      <td><code>distributed_nodes.py</code></td>
+      <td><code>Process</code> + <code>Queue.put/get</code></td>
+      <td>“Message passing antar node A/B/C.”</td>
+    </tr>
+    <tr>
+      <td><code>signal_generator.py</code></td>
+      <td>Baris <code>hum = 3.0 * sin(2*pi*50*t)</code></td>
+      <td>“Model gangguan saya definisikan untuk studi kasus.”</td>
+    </tr>
+  </table></div>
+
+  <h3>Langkah 5 — Checklist “bukan copy-paste” (baca sambil tunjuk)</h3>
+  <ol>
+    <li>Upstream: <strong>tidak ada</strong> <code>Host-Simulation/</code> → fork saya: <strong>ada</strong> + bisa di-run.</li>
+    <li>README upstream: bullet roadmap → saya: <strong>kode</strong> notch + benchmark + log node.</li>
+    <li>GUI menampilkan <strong>angka</strong> hum ↓% yang berubah tiap run (dari FFT), bukan screenshot template.</li>
+    <li>Terminal menampilkan speedup &lt; 1 jika memang lambat — <strong>jujur</strong>, bukan hasil plagiat template.</li>
+    <li>Dokumentasi ini + README menjelaskan <strong>masalah → solusi → file</strong> secara berurutan.</li>
+  </ol>
+
+  <div class="alert alert--warn">
+    <span class="alert__icon" aria-hidden="true">🎬</span>
+    <div>
+      <strong>Video Instagram Lab (20–30 detik)</strong>
+      Rekam: upstream vs fork (3 s) → GUI SEBELUM/SESUDAH + hum ↓% (15 s) → terminal <code>Peak match: OK</code> (5 s).
+    </div>
+  </div>
+
+  <!-- ========== KONTRIBUSI ========== -->
+  <h2 id="kontribusi">1. Kontribusi &amp; keaslian kerja (detail teknis)</h2>
+  <p>
+    Repo upstream <a href="https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode">CuffnCode</a>
+    berisi desain hardware (KiCad, TINA-TI, gambar prototipe). <strong>Seluruh folder
+    <code>Host-Simulation/</code></strong> dan dokumentasi IFB 206 ini <span class="author">saya buat untuk kuliah</span>
+    — tidak ada di repo asli sebelum fork.
+  </p>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>Yang saya tulis sendiri</th><th>Berkas / cakupan</th></tr>
+    <tr>
+      <td>Pipeline benchmark paralel + perbandingan scheduling</td>
+      <td><code>parallel_pipeline.py</code> (~107 baris)</td>
+    </tr>
+    <tr>
+      <td>Simulasi 3 node dengan <code>Process</code> + <code>Queue</code></td>
+      <td><code>distributed_nodes.py</code></td>
+    </tr>
+    <tr>
+      <td>Filter IIR notch 50 Hz + moving average per chunk</td>
+      <td><code>filters.py</code> — loop sampel-per-sampel (bukan panggilan library siap pakai)</td>
+    </tr>
+    <tr>
+      <td>Generator waveform oscillometric + hum 50 Hz sintetis</td>
+      <td><code>signal_generator.py</code></td>
+    </tr>
+    <tr>
+      <td>Analisis SEBELUM/SESUDAH dengan FFT band-power</td>
+      <td><code>signal_analysis.py</code></td>
+    </tr>
+    <tr>
+      <td>Konstanta &amp; teks fase dari spesifikasi repo (gain AD620, offset TLC)</td>
+      <td><code>cuffncode_specs.py</code> — rumus dihitung ulang, bukan copy teks</td>
+    </tr>
+    <tr>
+      <td>State machine pump/valve + telemetri AFE/ADC</td>
+      <td><code>hardware_sim.py</code></td>
+    </tr>
+    <tr>
+      <td>GUI Tkinter + Matplotlib (diagram, animasi fase, grafik)</td>
+      <td><code>gui_app.py</code> (~750 baris), entry <code>gui.py</code></td>
+    </tr>
+    <tr>
+      <td>Orkestrator terminal</td>
+      <td><code>main.py</code> — menjalankan dua skrip benchmark berurutan</td>
+    </tr>
+  </table></div>
+  <p>
+    Yang saya <strong>rujuk</strong> (bukan klaim implementasi): nilai komponen MPS20N0040D, AD620, STM32F411CE dari README/Obsidian CuffnCode.
+    Yang saya <strong>implementasikan</strong>: cara Host memproses batch ADC secara paralel dan terdistribusi di Python.
+  </p>
+
+  <!-- ========== DESAIN ========== -->
+  <h2 id="desain">2. Keputusan desain yang saya ambil</h2>
+
+  <h3>2.1 Mengapa studi kasus CuffnCode?</h3>
+  <p>
+    Roadmap repo menyebut <em>notch 50/60 Hz hum killer</em> — belum ada di firmware STM32.
+    Saya menempatkan algoritma itu di <strong>lapisan Host</strong> agar tugas paralel punya domain nyata:
+    batch sampel ADC panjang, task filter identik per chunk, dan node terpisah (acquire / process / store).
+  </p>
+
+  <h3>2.2 Mengapa <code>multiprocessing</code> bukan OpenMP/MPI?</h3>
+  <p>
+    Lingkungan target = laptop Windows mahasiswa + Python scientific stack.
+    <code>Pool.map</code> memetakan langsung ke konsep <strong>data parallelism</strong> di kuliah;
+    <code>Queue</code> + <code>Process</code> memetakan <strong>message passing</strong> tanpa cluster.
+    Saya sengaja menambahkan catatan di benchmark ketika speedup &lt; 1 — itu hasil pengukuran jujur di Windows, bukan disembunyikan.
+  </p>
+
+  <h3>2.3 Notch IIR ditulis manual</h3>
+  <p>
+    Di <code>filters.notch_50hz</code> saya implementasikan koefisien biquad dan state <code>x1,x2,y1,y2</code>
+    per sampel. Alasan: (1) tugas CPU-bound per chunk untuk paralel; (2) bisa di-port ke CMSIS-DSP/STM32 nanti;
+    (3) menghindari ketergantungan <code>scipy.signal</code> hanya untuk demo.
+  </p>
+
+  <h3>2.4 GUI vs benchmark — dua mode berbeda</h3>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>Konteks</th><th>Perilaku paralel</th><th>Alasan</th></tr>
+    <tr>
+      <td><code>python main.py</code></td>
+      <td><code>Pool.map</code> sesungguhnya, 16 chunk, 12 filter pass</td>
+      <td>Benchmark numerik untuk laporan (timing, speedup)</td>
+    </tr>
+    <tr>
+      <td><code>python gui.py</code> fase HOST_PARALLEL</td>
+      <td>Loop 8 chunk memanggil <code>process_chunk</code> + animasi progress bar</td>
+      <td>Thread GUI tidak aman memanggil <code>Pool</code> dari worker; animasi harus terlihat per chunk</td>
+    </tr>
+    <tr>
+      <td>GUI fase HOST_DISTRIBUTED</td>
+      <td>Animasi highlight Node A/B/C + log</td>
+      <td>Proses OS nyata ada di <code>distributed_nodes.py</code>; GUI menjelaskan alur ke dosen</td>
+    </tr>
+  </table></div>
+
+  <!-- ========== MODUL ========== -->
+  <h2 id="modul">3. Modul yang saya implementasikan</h2>
+
+  <h3 id="sinyal">3.1 <code>signal_generator.py</code> — model fisika + gangguan</h3>
+  <p>Saya menyusun sinyal sebagai superposisi komponen dengan makna oscillometric:</p>
+  <pre>envelope = 80 * exp(-0.35*t) * (1 - exp(-2.5*t))   # kempisan cuff
+carrier  = 0.15 * sin(2π * 1.2 * t)                 # osilasi arteri
+hum      = 3.0 * sin(2π * 50 * t)                   # PLN 50 Hz (roadmap notch)
+noise    = N(0, 0.8)                                # white noise
+fs       = 200 Hz, durasi default 24 s (benchmark) / 10 s (GUI)</pre>
+  <p>
+    Parameter <code>seed=42</code> agar hasil reproduksibel saat dosen menjalankan ulang.
+    Satuan disamakan dengan “mV equivalent” agar konsisten dengan telemetri bridge di GUI.
+  </p>
+
+  <h3>3.2 <code>cuffncode_specs.py</code> — konstanta dari datasheet/repo</h3>
+  <p>Saya menghitung ulang (bukan mengutip angka bulat saja):</p>
+  <ul>
+    <li><strong>Gain AD620:</strong> <code>G = 1 + 49400/470 ≈ 106.17</code> (README menyebut ≈105)</li>
+    <li><strong>Offset TLC2272:</strong> divider 47k/56k pada 3.3 V → ~1.79 V di kode, dengan catatan toleransi komponen</li>
+    <li><strong>ADC:</strong> 12-bit, 200 Hz — dipakai di <code>hardware_sim._compute_telemetry</code> untuk kode ADC peak</li>
+  </ul>
+  <p>Dictionary <code>PHASE_SPECS</code> berisi teks edukatif per fase (inflate, hold, deflate, AFE, Host) — ditampilkan di panel GUI saat simulasi berjalan.</p>
+
+  <h3>3.3 <code>hardware_sim.py</code> — state machine</h3>
+  <p>Enum <code>Phase</code> dengan 11 fase: dari <code>PUMP_INFLATE</code> hingga <code>HOST_DISTRIBUTED</code>.</p>
+  <div class="card">
+    <strong>Telemetri yang saya hitung</strong>
+    Peak bridge (mV) → × <code>AD620_GAIN</code> → + <code>TLC_OFFSET_V</code> → kode ADC 12-bit.
+    <code>active_blocks()</code> menyalakan blok diagram per fase di <code>gui_app._draw_diagram()</code>.
+  </div>
+
+  <h3>3.4 <code>signal_analysis.py</code> — bukti numerik filter</h3>
+  <p>
+    Saya tidak hanya memplot garis hijau/merah — saya menghitung:
+  </p>
+  <ul>
+    <li><strong>Daya hum 50 Hz</strong> via <code>np.fft.rfft</code> pada band ±3 Hz (fungsi <code>_band_power</code>)</li>
+    <li><strong>Noise residu</strong> = std(sinyal − moving average 21 tap)</li>
+    <li><strong>Perubahan peak envelope</strong> → mapping demo BP <code>sys = 70 + peak*0.55</code> (eksplisit: bukan klinis)</li>
+  </ul>
+  <p>Output <code>FilterComparison</code> mengisi panel “PENGARUH pemrosesan” di GUI dengan angka % penurunan hum/noise.</p>
+
+  <!-- ========== PARALEL ========== -->
+  <h2 id="paralel">4. Komputasi paralel — detail implementasi</h2>
+  <p>File: <code>Host-Simulation/src/parallel_pipeline.py</code></p>
+
+  <h3>4.1 Alur yang saya tulis</h3>
+  <ol>
+    <li><code>generate_cuff_waveform()</code> → vektor N sampel</li>
+    <li><code>split_signal(signal, n_chunks=16)</code> → list chunk terindeks</li>
+    <li><strong>Sequential:</strong> for-loop memanggil <code>process_chunk((i, ch, fs, passes))</code></li>
+    <li><strong>Parallel:</strong> <code>Pool(workers=cpu_count()-1).map(process_chunk, tasks, chunksize=2)</code></li>
+    <li><strong>Dynamic:</strong> sama dengan <code>chunksize=1</code> (worker ambil chunk berikutnya saat idle)</li>
+    <li><code>merge_chunks</code> — sort by index, <code>np.concatenate</code> (tahap reduce)</li>
+    <li>Verifikasi: <code>peak_seq ≈ peak_par</code> — jika beda, ada bug race/merge</li>
+  </ol>
+
+  <h3>4.2 Worker <code>process_chunk</code> (filters.py)</h3>
+  <pre>def process_chunk(args):
+    idx, chunk, fs, passes = args
+    filtered = chunk.astype(np.float64)
+    for _ in range(passes):          # default 12 pass → beban CPU besar (sengaja)
+        filtered = notch_50hz(moving_average(filtered, 11), fs)
+    peak = float(np.max(filtered))
+    return idx, filtered, peak       # indeks untuk merge yang benar</pre>
+  <p>
+    Saya set <code>filter_passes=12</code> di benchmark agar perbeda sequential vs parallel terlihat pada CPU;
+    di GUI hanya 4 pass per chunk agar animasi tidak terlalu lama.
+  </p>
+
+  <h3>4.3 Output terminal yang saya cetak (contoh)</h3>
+  <pre>Sequential : 0.34 s
+Parallel   : 1.49 s  (speedup ~ 0.23x)   ← Windows spawn overhead
+Peak match (seq vs par): OK</pre>
+  <p>
+    Pesan “Catatan: overhead spawn…” saya tambahkan agar penilaian tidak salah paham —
+    <strong>pola paralel benar</strong> meski speedup &lt; 1 pada N kecil.
+  </p>
+
+  <!-- ========== DISTRIBUTED ========== -->
+  <h2 id="distributed">5. Sistem terdistribusi — detail implementasi</h2>
+  <p>File: <code>Host-Simulation/src/distributed_nodes.py</code></p>
+
+  <h3>5.1 Tiga proses OS terpisah</h3>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>Fungsi</th><th>Peran</th><th>Pesan keluar</th></tr>
+    <tr>
+      <td><code>node_acquisition</code></td>
+      <td>Memecah waveform 4 batch; <code>sleep(0.05)</code> simulasi streaming ADC</td>
+      <td><code>{"type":"samples","batch_id", "data"}</code> lalu <code>eof</code></td>
+    </tr>
+    <tr>
+      <td><code>node_processing</code></td>
+      <td>Blocking <code>in_q.get()</code>; MA + notch; simpan peak per batch</td>
+      <td><code>{"type":"features","peaks":[...]}</code></td>
+    </tr>
+    <tr>
+      <td><code>node_storage</code></td>
+      <td><code>max(peaks)</code> → estimasi BP demo</td>
+      <td>Print ke stdout (setara UI/log)</td>
+    </tr>
+  </table></div>
+
+  <h3>5.2 Mengapa <code>Queue</code> bukan shared memory?</h3>
+  <p>
+    Sesuai materi message passing: tiap node hanya melihat pesan di antrian — mirip pola MPI send/recv
+    pada skala satu mesin. Saya hindari <code>Array</code> shared karena fokus demonstrasi adalah
+    <strong>dekompisi subsistem</strong> CuffnCode (sensor stream → DSP → tampilan BP).
+  </p>
+
+  <h3>5.3 Log yang membuktikan eksekusi nyata</h3>
+  <pre>[Node A | Acquisition] Streaming selesai.
+[Node B | Processing] Batch 0 diproses.
+...
+[Node C | Storage/UI] Distributed BP estimate: 107/66 mmHg (demo)</pre>
+
+  <!-- ========== GUI ========== -->
+  <h2 id="gui">6. GUI — apa yang saya bangun</h2>
+  <p>File: <code>gui_app.py</code> — aplikasi tunggal dengan:</p>
+  <ul>
+    <li><strong>Diagram Canvas</strong> — blok cuff, pump, 2 solenoid, sensor, AD620, TLC2272, STM32, Host, Node A/B/C; warna blok aktif mengikuti <code>active_blocks()</code></li>
+    <li><strong>Thread terpisah</strong> — <code>threading.Thread(target=_run_simulation)</code> agar UI tidak freeze; update UI via <code>root.after(0, ...)</code></li>
+    <li><strong>Animasi deflate</strong> — plot slice bertahap + tekanan cuff turun 190→40 mmHg simulasi</li>
+    <li><strong>Dua subplot Matplotlib</strong> — SEBELUM (raw+hum) vs SESUDAH (filtered) + garis peak envelope</li>
+    <li><strong>Panel metrik</strong> — isi dari <code>compare_before_after()</code> dengan highlight bagian PENGARUH</li>
+  </ul>
+  <p>
+    Tema gelap (<code>#1a1d23</code>) dan layout <code>pack</code> dari bawah (log/footer dulu) saya atur supaya tombol
+    “Mulai Simulasi” tidak tertutup grafik pada resolusi 1440×920.
+  </p>
+
+  <!-- ========== SINYAL ========== -->
+  <h2 id="jalankan">7. Cara menjalankan &amp; output yang diharapkan</h2>
+  <pre>git clone https://github.com/Farmil23/CuffnCode.git
+cd CuffnCode/Host-Simulation
+pip install -r requirements.txt
+python gui.py      # demo visual — wajib untuk video
+python main.py     # bukti terminal paralel + distributed</pre>
+
+  <h3>Checklist saat demo ke dosen</h3>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>Langkah</th><th>Yang harus terlihat</th></tr>
+    <tr><td>GUI → Mulai Simulasi</td><td>Fase berubah: inflate → hold → deflate → sensor → AFE → STM32 → Host parallel → distributed</td></tr>
+    <tr><td>Grafik</td><td>Garis merah (hum 50 Hz terlihat) vs hijau (lebih halus); panel % penurunan hum</td></tr>
+    <tr><td>Telemetri</td><td>Bridge mV, AD620 mV, offset V, kode ADC</td></tr>
+    <tr><td>Terminal <code>main.py</code></td><td>Timing 3 mode + <code>Peak match: OK</code> + log Node A/B/C</td></tr>
+  </table></div>
+
+  <!-- ========== MATKUL ========== -->
+  <h2 id="matkul">8. Pemetaan IFB 206 (dengan bukti di repo)</h2>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>Topik kuliah</th><th>Implementasi saya</th><th>Bukti</th></tr>
+    <tr>
+      <td>Data parallelism</td>
+      <td>Task <code>process_chunk</code> identik; data = tiap chunk</td>
+      <td><code>Pool.map</code> + merge terindeks</td>
+    </tr>
+    <tr>
+      <td>Load balancing</td>
+      <td><code>chunksize=1</code> vs <code>chunksize=2</code></td>
+      <td><code>run_benchmark()</code> cetak waktu Dynamic</td>
+    </tr>
+    <tr>
+      <td>Message passing</td>
+      <td>Dict pesan antar proses</td>
+      <td><code>distributed_nodes.py</code></td>
+    </tr>
+    <tr>
+      <td>Pipeline / sistem tersegmentasi</td>
+      <td>A acquire → B process → C store</td>
+      <td>Diagram Node A/B/C di GUI + 3 <code>Process</code></td>
+    </tr>
+    <tr>
+      <td>Studi kasus domain</td>
+      <td>Filter hum cuff BP</td>
+      <td>Notch 50 Hz + MA; kait roadmap CuffnCode</td>
+    </tr>
+  </table></div>
+
+  <h2 id="pelaksana">9. Tentang saya &amp; checklist tugas</h2>
+  <div class="card card--success">
+    <strong>Farhan Kamil Hermansyah — pelaksana tunggal</strong>
+    Saya yang menulis seluruh kode <code>Host-Simulation/</code>, GUI, benchmark, dan halaman dokumentasi ini.
+    Fork GitHub: <a href="https://github.com/Farmil23/CuffnCode">Farmil23/CuffnCode</a>.
+  </div>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>Nama</th><th>NRP</th><th>Kelas</th><th>Peran</th></tr>
+    <tr><td><strong>Farhan Kamil Hermansyah</strong></td><td>152024150</td><td>CC</td><td>100% — implementasi &amp; dokumentasi</td></tr>
+  </table></div>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>Deliverable</th><th>Status</th></tr>
+    <tr><td>Kode Host-Simulation</td><td>✓</td></tr>
+    <tr><td>README + dokumentasi implementasi (halaman ini)</td><td>✓</td></tr>
+    <tr><td>GitHub Pages</td><td>✓ folder <code>/docs</code></td></tr>
+    <tr><td>Video demo GUI</td><td>Unggah Instagram Lab</td></tr>
+  </table></div>
+  <ul>
+    <li><a href="https://github.com/Farmil23/CuffnCode">Farmil23/CuffnCode</a></li>
+    <li><a href="https://github.com/Farmil23/CuffnCode/tree/main/Host-Simulation">Host-Simulation</a></li>
+    <li><a href="https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode">CuffnCode hardware (upstream)</a></li>
+    <li><a href="https://publish.obsidian.md/auralius/Published/CuffnCode">Obsidian — desain</a></li>
+  </ul>
+  <p class="footer-note">Estimasi BP pada simulasi saya hanya untuk demo kuliah — bukan diagnosis medis.</p>
+
+  </main>
+
+  <nav class="side-nav float-nav" aria-label="Daftar isi dokumentasi Farhan">
+    <span class="side-nav__title">Daftar isi</span>
+    <div class="side-nav__links">
+      <a href="#atas" data-section="atas"><span class="dot"></span><span class="label">Awal</span></a>
+      <a href="#solusi" data-section="solusi"><span class="dot"></span><span class="label">Solusi</span></a>
+      <a href="#demo" data-section="demo"><span class="dot"></span><span class="label">Demo</span></a>
+      <a href="#kontribusi" data-section="kontribusi"><span class="dot"></span><span class="label">Kontribusi</span></a>
+      <a href="#desain" data-section="desain"><span class="dot"></span><span class="label">Desain</span></a>
+      <a href="#modul" data-section="modul"><span class="dot"></span><span class="label">Modul</span></a>
+      <a href="#paralel" data-section="paralel"><span class="dot"></span><span class="label">Paralel</span></a>
+      <a href="#distributed" data-section="distributed"><span class="dot"></span><span class="label">Distributed</span></a>
+      <a href="#gui" data-section="gui"><span class="dot"></span><span class="label">GUI</span></a>
+      <a href="#jalankan" data-section="jalankan"><span class="dot"></span><span class="label">Jalankan</span></a>
+      <a href="#matkul" data-section="matkul"><span class="dot"></span><span class="label">Matkul</span></a>
+      <a href="#pelaksana" data-section="pelaksana"><span class="dot"></span><span class="label">Pelaksana</span></a>
+    </div>
+  </nav>
+
+  <footer class="site-footer">
+    <strong>Farhan Kamil Hermansyah</strong> · NRP 152024150 · ITENAS CC<br>
+    IFB 206 Komputasi Paralel — EVALUASI 3 · Semester Genap 2025/2026<br>
+    <a href="https://github.com/Farmil23/CuffnCode">github.com/Farmil23/CuffnCode</a>
+  </footer>
+
+  <script>
+    (function () {
+      var links = document.querySelectorAll(".side-nav a[data-section], .float-nav a[data-section]");
+      var sections = [];
+      links.forEach(function (a) {
+        var id = a.getAttribute("data-section");
+        var el = document.getElementById(id);
+        if (el) sections.push({ id: id, el: el, link: a });
+      });
+      function setActive(id) {
+        links.forEach(function (a) {
+          a.classList.toggle("active", a.getAttribute("data-section") === id);
+        });
+      }
+      links.forEach(function (a) {
+        a.addEventListener("click", function (e) {
+          var id = a.getAttribute("data-section");
+          var target = document.getElementById(id);
+          if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+            setActive(id);
+            history.replaceState(null, "", "#" + id);
+          }
+        });
+      });
+      var topBtn = document.getElementById("topBtn");
+      window.addEventListener("scroll", function () {
+        var y = window.scrollY;
+        topBtn.classList.toggle("visible", y > 400);
+        var current = sections[0] ? sections[0].id : "";
+        for (var i = 0; i < sections.length; i++) {
+          if (sections[i].el.offsetTop - 140 <= y) current = sections[i].id;
+        }
+        setActive(current);
+      }, { passive: true });
+      if (location.hash) {
+        var h = location.hash.slice(1);
+        setActive(h);
+      }
+    })();
+  </script>
+</body>
+</html>
