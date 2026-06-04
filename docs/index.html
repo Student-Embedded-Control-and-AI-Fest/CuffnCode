@@ -4,168 +4,410 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CuffnCode Host-Simulation — Dokumentasi Implementasi | IFB 206</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    :root { --bg: #0d1117; --panel: #161b22; --text: #e6edf3; --muted: #8b949e; --accent: #58a6ff; --ok: #3fb950; --warn: #d29922; --border: #30363d; }
-    body { font-family: "Segoe UI", system-ui, sans-serif; max-width: 900px; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; line-height: 1.65; color: var(--text); background: var(--bg); }
-    h1 { color: var(--accent); font-size: 1.75rem; margin-bottom: 0.25rem; }
-    h2 { margin-top: 2rem; padding-bottom: 0.35rem; border-bottom: 1px solid var(--border); color: #79c0ff; font-size: 1.25rem; }
-    h3 { margin-top: 1.25rem; color: #c9d1d9; font-size: 1.05rem; }
-    p, li { color: #c9d1d9; }
-    .lead { font-size: 1.05rem; color: var(--muted); }
-    code { background: var(--panel); padding: 0.12rem 0.35rem; border-radius: 4px; font-size: 0.88em; border: 1px solid var(--border); }
-    pre { background: var(--panel); border: 1px solid var(--border); padding: 1rem; overflow-x: auto; border-radius: 8px; font-size: 0.82em; line-height: 1.45; }
-    table { border-collapse: collapse; width: 100%; margin: 0.75rem 0; font-size: 0.92em; }
-    th, td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; vertical-align: top; }
-    th { background: var(--panel); color: var(--accent); }
-    a { color: var(--accent); }
-    .badge { display: inline-block; background: #1f3a5f; color: #79c0ff; padding: 0.15rem 0.55rem; border-radius: 4px; font-size: 0.82rem; margin: 0.15rem 0.25rem 0.15rem 0; }
-    .note { background: #332b00; border: 1px solid var(--warn); border-radius: 8px; padding: 1rem; margin: 1rem 0; }
-    .note strong { color: #e3b341; }
-    .impl { background: #12261e; border-left: 4px solid var(--ok); padding: 0.75rem 1rem; margin: 0.75rem 0; border-radius: 0 6px 6px 0; }
-    .impl strong { color: var(--ok); }
-    ul { padding-left: 1.25rem; }
-    li { margin: 0.35rem 0; }
-    .author { color: var(--ok); }
-    h2[id], h3[id] { scroll-margin-top: 1.5rem; }
-    /* Navigasi mengambang — klik langsung ke bagian */
-    .float-nav {
-      position: fixed;
-      right: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      gap: 0.45rem;
-      padding: 0.65rem 0.5rem;
-      background: rgba(22, 27, 34, 0.92);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.45);
-      backdrop-filter: blur(8px);
-      max-height: 85vh;
-      overflow-y: auto;
+    :root {
+      --bg: #080b10;
+      --bg-elevated: #0f1419;
+      --surface: #151b24;
+      --surface-hover: #1c2430;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.12);
+      --text: #f0f4f8;
+      --text-secondary: #9ca8b8;
+      --accent: #3b82f6;
+      --accent-soft: rgba(59, 130, 246, 0.12);
+      --accent-glow: rgba(59, 130, 246, 0.35);
+      --success: #22c55e;
+      --success-soft: rgba(34, 197, 94, 0.1);
+      --warn-bg: #1a1608;
+      --warn-border: rgba(234, 179, 8, 0.45);
+      --warn-text: #fde68a;
+      --radius: 12px;
+      --radius-lg: 16px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --font: "Inter", system-ui, -apple-system, sans-serif;
+      --mono: "JetBrains Mono", Consolas, monospace;
+      --content-max: 760px;
+      --nav-width: 200px;
     }
-    .float-nav a {
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.15), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 0%, rgba(99, 102, 241, 0.08), transparent);
+      min-height: 100vh;
+    }
+    a { color: #60a5fa; text-decoration: none; transition: color 0.15s; }
+    a:hover { color: #93c5fd; text-decoration: underline; }
+    .page {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+    }
+    @media (min-width: 1200px) {
+      .page { margin-right: calc(var(--nav-width) + 2rem); margin-left: auto; padding-left: 2rem; }
+    }
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--bg-elevated) 100%);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 2rem 2rem 1.75rem;
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), #6366f1, var(--accent));
+    }
+    .hero__badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: #93c5fd;
+      background: var(--accent-soft);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 999px;
+    }
+    .badge--author { color: #86efac; background: var(--success-soft); border-color: rgba(34, 197, 94, 0.3); }
+    .hero h1 {
+      margin: 0 0 0.75rem;
+      font-size: clamp(1.6rem, 4vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero__lead { margin: 0 0 1.25rem; font-size: 1rem; color: var(--text-secondary); max-width: 52ch; }
+    .hero__lead strong { color: var(--text); font-weight: 600; }
+    .nav-hint {
+      margin: 1rem 0 0;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      background: var(--bg-elevated);
+      border-radius: var(--radius);
+      border: 1px dashed var(--border-strong);
+    }
+    .nav-hint strong { color: var(--accent); font-weight: 600; }
+    /* Alerts */
+    .alert {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      padding: 1rem 1.15rem;
+      border-radius: var(--radius);
+      margin: 1rem 0 0;
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+    .alert--warn {
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-border);
+      color: var(--warn-text);
+    }
+    .alert--warn strong { color: #fef08a; display: block; margin-bottom: 0.25rem; }
+    .alert__icon { font-size: 1.1rem; flex-shrink: 0; opacity: 0.9; }
+    /* Typography */
+    h2 {
+      margin: 2.75rem 0 1rem;
+      padding-bottom: 0.6rem;
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      border-bottom: 1px solid var(--border-strong);
+    }
+    h2::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 1.1em;
+      margin-right: 0.6rem;
+      vertical-align: -0.15em;
+      background: linear-gradient(180deg, var(--accent), #6366f1);
+      border-radius: 2px;
+    }
+    h3 {
+      margin: 1.5rem 0 0.65rem;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+    p { margin: 0 0 1rem; color: var(--text-secondary); }
+    p strong, li strong { color: var(--text); font-weight: 600; }
+    ol, ul { margin: 0 0 1rem; padding-left: 1.35rem; color: var(--text-secondary); }
+    li { margin: 0.4rem 0; }
+    li::marker { color: var(--accent); }
+    .author { color: var(--success); font-weight: 600; }
+    h2[id], h3[id] { scroll-margin-top: 2rem; }
+    /* Code */
+    code {
+      font-family: var(--mono);
+      font-size: 0.84em;
+      padding: 0.15em 0.45em;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: #7dd3fc;
+    }
+    pre {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      line-height: 1.55;
+      padding: 1.15rem 1.25rem;
+      margin: 1rem 0;
+      background: #0a0d12;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      overflow-x: auto;
+      color: #cbd5e1;
+    }
+    /* Tables */
+    .tbl-wrap { overflow-x: auto; margin: 1rem 0 1.25rem; border-radius: var(--radius); border: 1px solid var(--border-strong); }
+    table.tbl {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      margin: 0;
+    }
+    table.tbl thead { background: var(--surface); }
+    table.tbl th {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-strong);
+    }
+    table.tbl td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      vertical-align: top;
+    }
+    table.tbl tbody tr:last-child td { border-bottom: none; }
+    table.tbl tbody tr:hover td { background: var(--surface-hover); }
+    table.tbl td strong { color: var(--text); }
+    /* Cards */
+    .solution-grid { display: grid; gap: 1rem; margin: 1.25rem 0; }
+    @media (min-width: 700px) { .solution-grid { grid-template-columns: 1fr; } }
+    .card {
+      padding: 1.15rem 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { border-color: rgba(59, 130, 246, 0.3); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25); }
+    .card strong { color: var(--text); display: block; margin-bottom: 0.5rem; font-size: 0.95rem; }
+    .card--success { border-left: 3px solid var(--success); background: linear-gradient(90deg, var(--success-soft), var(--surface) 40%); }
+    .card--success strong { color: #86efac; }
+    .card em { color: #94a3b8; font-style: normal; font-size: 0.82rem; }
+    .impl { /* legacy alias */ }
+    .quote-box {
+      margin: 1.5rem 0;
+      padding: 1.15rem 1.35rem;
+      background: var(--accent-soft);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+    .quote-box strong { color: var(--text); font-style: normal; }
+    .footer-note {
+      display: block;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      opacity: 0.85;
+    }
+    /* Side navigation */
+    .side-nav {
+      position: fixed;
+      z-index: 1000;
+      background: rgba(15, 20, 28, 0.88);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .side-nav__title {
+      display: block;
+      padding: 0.65rem 1rem 0.35rem;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-secondary);
+    }
+    .side-nav__links { display: flex; flex-direction: column; gap: 2px; padding: 0.35rem 0.5rem 0.65rem; }
+    .side-nav a {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
+      padding: 0.45rem 0.75rem;
       text-decoration: none;
-      color: var(--muted);
-      font-size: 0.72rem;
-      padding: 0.35rem 0.5rem 0.35rem 0.35rem;
-      border-radius: 999px;
-      transition: background 0.15s, color 0.15s;
-      white-space: nowrap;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-weight: 500;
+      border-radius: 8px;
+      transition: all 0.18s ease;
     }
-    .float-nav a:hover {
+    .side-nav a:hover {
       color: var(--text);
-      background: rgba(88, 166, 255, 0.15);
+      background: var(--surface-hover);
+      text-decoration: none;
     }
-    .float-nav a.active {
+    .side-nav a.active {
       color: #fff;
-      background: var(--accent);
+      background: linear-gradient(135deg, var(--accent), #4f46e5);
+      box-shadow: 0 2px 12px var(--accent-glow);
     }
-    .float-nav .dot {
-      width: 10px;
-      height: 10px;
+    .side-nav .dot {
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      background: var(--border);
+      background: var(--border-strong);
       flex-shrink: 0;
-      transition: background 0.15s, transform 0.15s;
+      transition: transform 0.18s, background 0.18s;
     }
-    .float-nav a:hover .dot { background: var(--accent); transform: scale(1.15); }
-    .float-nav a.active .dot { background: #fff; box-shadow: 0 0 0 2px var(--accent); }
-    .float-nav .label { display: none; }
-    @media (min-width: 1100px) {
-      body { margin-right: 3.5rem; }
-      .float-nav .label { display: inline; }
-      .float-nav { padding: 0.75rem 0.65rem; }
+    .side-nav a:hover .dot { background: var(--accent); transform: scale(1.3); }
+    .side-nav a.active .dot { background: #fff; box-shadow: 0 0 8px rgba(255,255,255,0.5); }
+    @media (min-width: 1200px) {
+      .side-nav {
+        right: 1.25rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: var(--nav-width);
+        max-height: 88vh;
+        overflow-y: auto;
+      }
+      .side-nav__links { padding: 0.25rem 0.6rem 0.75rem; }
     }
-    @media (max-width: 699px) {
-      .float-nav {
-        top: auto;
+    @media (max-width: 1199px) {
+      .side-nav {
+        left: 50%;
         bottom: 1rem;
-        right: 50%;
-        transform: translateX(50%);
+        transform: translateX(-50%);
+        width: auto;
+        max-width: calc(100vw - 2rem);
+      }
+      .side-nav__title { display: none; }
+      .side-nav__links {
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
-        max-width: 96vw;
-        border-radius: 12px;
         gap: 0.35rem;
+        padding: 0.5rem 0.65rem;
       }
-      .float-nav a { padding: 0.4rem; }
-      .float-nav .label { display: none; }
+      .side-nav a { padding: 0.4rem 0.65rem; font-size: 0.72rem; }
+      .side-nav .label { display: none; }
+      .page { padding-bottom: 6rem; }
     }
     .top-link {
       position: fixed;
-      bottom: 1rem;
-      right: 1rem;
+      bottom: 1.25rem;
+      right: 1.25rem;
       z-index: 999;
-      width: 42px;
-      height: 42px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
-      background: var(--accent);
+      background: linear-gradient(135deg, var(--accent), #4f46e5);
       color: #fff;
-      text-align: center;
-      line-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-decoration: none;
-      font-size: 1.1rem;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+      font-size: 1.15rem;
+      font-weight: 600;
+      box-shadow: 0 4px 20px var(--accent-glow);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.2s;
+      transition: opacity 0.25s, transform 0.25s;
     }
     .top-link.visible { opacity: 1; pointer-events: auto; }
+    .top-link:hover { transform: translateY(-2px); text-decoration: none; color: #fff; }
+    @media (max-width: 1199px) {
+      .top-link { bottom: 5.5rem; right: 1rem; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Navigasi mengambang: klik titik / label → scroll ke bagian -->
-  <nav class="float-nav" aria-label="Navigasi bagian dokumentasi">
-    <a href="#atas" data-section="atas" title="Judul"><span class="dot"></span><span class="label">Awal</span></a>
-    <a href="#solusi" data-section="solusi" title="Solusi saya"><span class="dot"></span><span class="label">Solusi</span></a>
-    <a href="#kontribusi" data-section="kontribusi" title="Kontribusi"><span class="dot"></span><span class="label">Kontribusi</span></a>
-    <a href="#desain" data-section="desain" title="Desain"><span class="dot"></span><span class="label">Desain</span></a>
-    <a href="#modul" data-section="modul" title="Modul"><span class="dot"></span><span class="label">Modul</span></a>
-    <a href="#sinyal" data-section="sinyal" title="Model sinyal"><span class="dot"></span><span class="label">Sinyal</span></a>
-    <a href="#paralel" data-section="paralel" title="Paralel"><span class="dot"></span><span class="label">Paralel</span></a>
-    <a href="#distributed" data-section="distributed" title="Distributed"><span class="dot"></span><span class="label">Distributed</span></a>
-    <a href="#gui" data-section="gui" title="GUI"><span class="dot"></span><span class="label">GUI</span></a>
-    <a href="#demo" data-section="demo" title="Cara tunjukkan"><span class="dot"></span><span class="label">Demo</span></a>
-    <a href="#jalankan" data-section="jalankan" title="Cara jalankan"><span class="dot"></span><span class="label">Jalankan</span></a>
-    <a href="#matkul" data-section="matkul" title="IFB 206"><span class="dot"></span><span class="label">Matkul</span></a>
-    <a href="#pelaksana" data-section="pelaksana" title="Pelaksana"><span class="dot"></span><span class="label">Pelaksana</span></a>
+  <nav class="side-nav float-nav" aria-label="Navigasi bagian">
+    <span class="side-nav__title">Navigasi</span>
+    <div class="side-nav__links">
+      <a href="#atas" data-section="atas"><span class="dot"></span><span class="label">Awal</span></a>
+      <a href="#solusi" data-section="solusi"><span class="dot"></span><span class="label">Solusi</span></a>
+      <a href="#demo" data-section="demo"><span class="dot"></span><span class="label">Demo</span></a>
+      <a href="#kontribusi" data-section="kontribusi"><span class="dot"></span><span class="label">Kontribusi</span></a>
+      <a href="#desain" data-section="desain"><span class="dot"></span><span class="label">Desain</span></a>
+      <a href="#modul" data-section="modul"><span class="dot"></span><span class="label">Modul</span></a>
+      <a href="#paralel" data-section="paralel"><span class="dot"></span><span class="label">Paralel</span></a>
+      <a href="#distributed" data-section="distributed"><span class="dot"></span><span class="label">Distributed</span></a>
+      <a href="#gui" data-section="gui"><span class="dot"></span><span class="label">GUI</span></a>
+      <a href="#jalankan" data-section="jalankan"><span class="dot"></span><span class="label">Jalankan</span></a>
+      <a href="#matkul" data-section="matkul"><span class="dot"></span><span class="label">Matkul</span></a>
+      <a href="#pelaksana" data-section="pelaksana"><span class="dot"></span><span class="label">Pelaksana</span></a>
+    </div>
   </nav>
   <a href="#atas" class="top-link" id="topBtn" aria-label="Kembali ke atas">↑</a>
 
-  <div id="atas"></div>
-
-  <p>
-    <span class="badge">IFB 206</span>
-    <span class="badge">EVALUASI 3</span>
-    <span class="badge">ITENAS 2025/2026</span>
-    <span class="badge">Farhan Kamil — 152024150</span>
-  </p>
-
-  <h1>CuffnCode — Host Simulation</h1>
-  <p class="lead">
-    Dokumentasi <strong>implementasi asli</strong> mini project pada
-    <a href="https://github.com/Farmil23/CuffnCode">Farmil23/CuffnCode</a>.
-    Bukan ringkasan README upstream — di bawah ini dijelaskan <em>apa yang saya tulis</em>,
-    <em>mengapa</em>, dan <em>bagaimana</em> modul saling terhubung.
-  </p>
-
-  <div class="note">
-    <strong>GUI tidak berjalan di halaman ini.</strong>
-    <code>python gui.py</code> adalah aplikasi desktop Tkinter (~750 baris <code>gui_app.py</code>).
-    Pages hanya dokumentasi; bukti visual: rekam layar GUI atau video Instagram Lab.
-  </div>
-
-  <p class="lead" style="margin-top:0.5rem;font-size:0.95rem;">
-    Gunakan <strong>titik navigasi di kanan</strong> (atau bawah pada HP) — klik <strong>Solusi</strong> untuk ringkasan masalah &amp; jawaban saya.
-  </p>
+  <main class="page" id="atas">
+    <header class="hero">
+      <div class="hero__badges">
+        <span class="badge">IFB 206</span>
+        <span class="badge">EVALUASI 3</span>
+        <span class="badge">ITENAS 2025/2026</span>
+        <span class="badge badge--author">Farhan Kamil · 152024150</span>
+      </div>
+      <h1>CuffnCode — Host Simulation</h1>
+      <p class="hero__lead">
+        Dokumentasi <strong>implementasi asli</strong> pada
+        <a href="https://github.com/Farmil23/CuffnCode">Farmil23/CuffnCode</a> —
+        masalah dari proyek CuffnCode, solusi kode saya, dan panduan demo untuk penilaian IFB 206.
+      </p>
+      <div class="alert alert--warn">
+        <span class="alert__icon" aria-hidden="true">⚠</span>
+        <div>
+          <strong>GUI tidak berjalan di halaman web</strong>
+          Jalankan <code>python gui.py</code> di laptop (Tkinter). Untuk bukti visual: rekam layar atau video Instagram Lab.
+        </div>
+      </div>
+      <p class="nav-hint">Klik item di panel <strong>Navigasi</strong> (kanan desktop / bawah HP) untuk loncat ke bagian.</p>
+    </header>
 
   <!-- ========== SOLUSI ========== -->
   <h2 id="solusi">Solusi yang saya buat — dari masalah CuffnCode (GitHub)</h2>
@@ -178,14 +420,14 @@
   </p>
 
   <h3>Apa yang sudah ada di GitHub CuffnCode (bukan karya saya)</h3>
-  <table>
+  <div class="tbl-wrap"><table class="tbl">
     <tr><th>Isi repo upstream</th><th>Status</th></tr>
     <tr><td>Desain AFE, gain AD620, offset TLC2272</td><td>Dokumentasi + TINA-TI</td></tr>
     <tr><td>Sensor MPS20N0040D, prototipe Black Pill</td><td>Gambar + penjelasan</td></tr>
     <tr><td>Pompa DC + 2 solenoid valve (inflate/deflate)</td><td>Diagram / Obsidian</td></tr>
     <tr><td>Roadmap: <em>50/60 Hz notch</em>, PCB, evaluasi performa</td><td>Daftar rencana — <strong>belum dikodekan</strong></td></tr>
     <tr><td>Folder <code>Host-Simulation/</code>, <code>parallel_pipeline.py</code>, GUI Python</td><td><strong>Tidak ada</strong></td></tr>
-  </table>
+  </table></div>
 
   <h3>Masalah yang saya ambil dari konteks proyek itu</h3>
   <ol>
@@ -196,30 +438,32 @@
   </ol>
 
   <h3>Tiga solusi yang saya implementasikan sendiri</h3>
+  <div class="solution-grid">
 
-  <div class="impl">
+  <div class="card card--success impl">
     <strong>Solusi 1 — Pipeline filter paralel di Host (data parallelism)</strong><br>
     <em>Masalah CuffnCode:</em> hum killer &amp; pemrosesan sinyal belum ada di firmware; Host akan menerima ribuan sampel.<br>
     <em>Yang saya buat:</em> memecah waveform jadi chunk → tiap chunk melalui <code>moving_average</code> + <code>notch_50hz</code> (IIR saya tulis sendiri) → <code>Pool.map</code> → merge terindeks.<br>
     <em>Bukti:</em> <code>parallel_pipeline.py</code>, <code>filters.py</code> — benchmark mencetak waktu sequential/parallel <strong>jujur</strong> (termasuk speedup &lt; 1 di Windows).
   </div>
 
-  <div class="impl">
+  <div class="card card--success impl">
     <strong>Solusi 2 — Arsitektur terdistribusi A → B → C (message passing)</strong><br>
     <em>Masalah CuffnCode:</em> platform “overinstrumented” punya rantai: acquisition di MCU, DSP bisa di Host, tampilan BP di UI.<br>
     <em>Yang saya buat:</em> tiga <code>Process</code> terpisah — A mengirim batch <code>{"type":"samples"}</code>, B memfilter &amp; mengirim peaks, C mengagregasi estimasi BP demo — semua lewat <code>Queue</code>, bukan variabel global.<br>
     <em>Bukti:</em> <code>distributed_nodes.py</code> — log <code>[Node A|B|C]</code> saat <code>python main.py</code>.
   </div>
 
-  <div class="impl">
+  <div class="card card--success impl">
     <strong>Solusi 3 — Simulator software + GUI edukatif (tanpa hardware)</strong><br>
     <em>Masalah CuffnCode:</em> repo hanya foto/skema; tidak ada cara interaktif melihat efek filter pada oscillometric deflate.<br>
     <em>Yang saya buat:</em> generator envelope+hum sintetis; state machine 11 fase (pump/valve/sensor/AFE/STM32/Host); grafik SEBELUM/SESUDAH; metrik FFT hum ↓% di <code>signal_analysis.py</code>; telemetri AD620/ADC dihitung dari rumus repo.<br>
     <em>Bukti:</em> <code>gui_app.py</code> (~750 baris), <code>hardware_sim.py</code>, <code>signal_generator.py</code>.
   </div>
+  </div>
 
   <h3>Peta: masalah GitHub → file solusi saya</h3>
-  <table>
+  <div class="tbl-wrap"><table class="tbl">
     <tr><th>Kebutuhan / gap di CuffnCode</th><th>Solusi saya</th><th>File</th></tr>
     <tr>
       <td>Roadmap notch 50 Hz</td>
@@ -246,7 +490,7 @@
       <td>Konstanta dihitung ulang; ditampilkan di log &amp; telemetri GUI</td>
       <td><code>cuffncode_specs.py</code></td>
     </tr>
-  </table>
+  </table></div>
 
   <h3>Mengapa ini bukan copy-paste README GitHub?</h3>
   <ul>
@@ -257,12 +501,11 @@
     <li>Keputusan yang terlihat “saya pikir sendiri”: GUI tidak pakai <code>Pool</code> (animasi), benchmark pakai <code>Pool</code>; <code>filter_passes=12</code> untuk beban CPU; <code>seed=42</code> agar demo reproduksibel.</li>
   </ul>
 
-  <p>
-    <strong>Ringkas satu kalimat untuk dosen:</strong>
-    <em>Saya melengkapi proyek CuffnCode dengan lapisan Host Python yang mengimplementasikan
-    hum-killer (roadmap), pemrosesan batch paralel, dan pipeline terdistribusi tiga node,
-    plus simulator GUI agar demonstrasi IFB 206 bisa tanpa hardware fisik.</em>
-  </p>
+  <div class="quote-box">
+    <strong>Ringkas untuk dosen:</strong>
+    <em>Saya melengkapi proyek CuffnCode dengan lapisan Host Python: hum-killer (roadmap),
+    pemrosesan batch paralel, pipeline terdistribusi tiga node, dan simulator GUI tanpa hardware fisik.</em>
+  </div>
 
   <!-- ========== CARA TUNJUKKAN ========== -->
   <h2 id="demo">Cara menunjukkan sambil menjelaskan (untuk dosen / video)</h2>
@@ -272,7 +515,7 @@
   </p>
 
   <h3>Langkah 1 — Bandingkan repo GitHub asli vs fork saya</h3>
-  <table>
+  <div class="tbl-wrap"><table class="tbl">
     <tr><th>Tunjukkan di layar</th><th>Jelaskan dengan kata-kata</th></tr>
     <tr>
       <td>
@@ -301,7 +544,7 @@
         bukan menyalin paragraf README hardware.”
       </td>
     </tr>
-  </table>
+  </table></div>
 
   <h3>Langkah 2 — Terminal: bukti komputasi paralel (<code>main.py</code>)</h3>
   <p><strong>Jalankan:</strong></p>
@@ -309,7 +552,7 @@
 pip install -r requirements.txt
 python main.py</pre>
 
-  <table>
+  <div class="tbl-wrap"><table class="tbl">
     <tr><th>Yang muncul di terminal</th><th>Apa yang saya jelaskan</th></tr>
     <tr>
       <td><code>Sequential : 0.34 s</code> … <code>Parallel : 1.49 s</code> … <code>speedup ~ 0.23x</code></td>
@@ -331,12 +574,12 @@ python main.py</pre>
         memetakan STM32 stream → filter Host → tampilan BP demo — sesuai materi message passing.”
       </td>
     </tr>
-  </table>
+  </table></div>
   <p><strong>Kaitkan ke CuffnCode:</strong> “Roadmap repo minta evaluasi performa — bagian timing ini jawaban saya; roadmap notch 50 Hz — diimplementasi di <code>filters.notch_50hz</code> yang dipanggil tiap chunk.”</p>
 
   <h3>Langkah 3 — GUI: bukti simulator &amp; filter (<code>gui.py</code>)</h3>
   <p><strong>Jalankan:</strong> <code>python gui.py</code> → klik <strong>Mulai Simulasi</strong>.</p>
-  <table>
+  <div class="tbl-wrap"><table class="tbl">
     <tr><th>Yang ditunjukkan di GUI</th><th>Apa yang saya jelaskan</th></tr>
     <tr>
       <td>Diagram: pump, 2 valve, sensor, AD620, TLC2272, STM32, Host, Node A/B/C menyala bergantian</td>
@@ -358,10 +601,10 @@ python main.py</pre>
       <td>Log: <code>Pool.map chunk 1/8</code> … <code>Node A/B/C</code></td>
       <td>“Fase Host menunjukkan paralel per chunk dan alur distributed — sama konsepnya dengan <code>main.py</code>, divisualkan untuk demo.”</td>
     </tr>
-  </table>
+  </table></div>
 
   <h3>Langkah 4 — Tunjukkan file kunci (opsional, jika ditanya kode)</h3>
-  <table>
+  <div class="tbl-wrap"><table class="tbl">
     <tr><th>File di GitHub</th><th>Tunjukkan bagian ini</th><th>Jelaskan</th></tr>
     <tr>
       <td><code>filters.py</code></td>
@@ -383,7 +626,7 @@ python main.py</pre>
       <td>Baris <code>hum = 3.0 * sin(2*pi*50*t)</code></td>
       <td>“Model gangguan saya definisikan untuk studi kasus.”</td>
     </tr>
-  </table>
+  </table></div>
 
   <h3>Langkah 5 — Checklist “bukan copy-paste” (baca sambil tunjuk)</h3>
   <ol>
@@ -394,11 +637,12 @@ python main.py</pre>
     <li>Dokumentasi ini + README menjelaskan <strong>masalah → solusi → file</strong> secara berurutan.</li>
   </ol>
 
-  <div class="note">
-    <strong>Untuk video Instagram Lab (20–30 detik):</strong>
-    rekam Layar 3–5 detik: perbandingan repo upstream vs fork →
-    10 detik: GUI Mulai Simulasi (grafik SEBELUM/SESUDAH + hum ↓%) →
-    5 detik: terminal <code>Peak match: OK</code> + log Node B.
+  <div class="alert alert--warn">
+    <span class="alert__icon" aria-hidden="true">🎬</span>
+    <div>
+      <strong>Video Instagram Lab (20–30 detik)</strong>
+      Rekam: upstream vs fork (3 s) → GUI SEBELUM/SESUDAH + hum ↓% (15 s) → terminal <code>Peak match: OK</code> (5 s).
+    </div>
   </div>
 
   <!-- ========== KONTRIBUSI ========== -->
@@ -409,7 +653,7 @@ python main.py</pre>
     <code>Host-Simulation/</code></strong> dan dokumentasi IFB 206 ini <span class="author">saya buat untuk kuliah</span>
     — tidak ada di repo asli sebelum fork.
   </p>
-  <table>
+  <div class="tbl-wrap"><table class="tbl">
     <tr><th>Yang saya tulis sendiri</th><th>Berkas / cakupan</th></tr>
     <tr>
       <td>Pipeline benchmark paralel + perbandingan scheduling</td>
@@ -447,7 +691,7 @@ python main.py</pre>
       <td>Orkestrator terminal</td>
       <td><code>main.py</code> — menjalankan dua skrip benchmark berurutan</td>
     </tr>
-  </table>
+  </table></div>
   <p>
     Yang saya <strong>rujuk</strong> (bukan klaim implementasi): nilai komponen MPS20N0040D, AD620, STM32F411CE dari README/Obsidian CuffnCode.
     Yang saya <strong>implementasikan</strong>: cara Host memproses batch ADC secara paralel dan terdistribusi di Python.
@@ -479,7 +723,7 @@ python main.py</pre>
   </p>
 
   <h3>2.4 GUI vs benchmark — dua mode berbeda</h3>
-  <table>
+  <div class="tbl-wrap"><table class="tbl">
     <tr><th>Konteks</th><th>Perilaku paralel</th><th>Alasan</th></tr>
     <tr>
       <td><code>python main.py</code></td>
@@ -496,7 +740,7 @@ python main.py</pre>
       <td>Animasi highlight Node A/B/C + log</td>
       <td>Proses OS nyata ada di <code>distributed_nodes.py</code>; GUI menjelaskan alur ke dosen</td>
     </tr>
-  </table>
+  </table></div>
 
   <!-- ========== MODUL ========== -->
   <h2 id="modul">3. Modul yang saya implementasikan</h2>
@@ -524,10 +768,10 @@ fs       = 200 Hz, durasi default 24 s (benchmark) / 10 s (GUI)</pre>
 
   <h3>3.3 <code>hardware_sim.py</code> — state machine</h3>
   <p>Enum <code>Phase</code> dengan 11 fase: dari <code>PUMP_INFLATE</code> hingga <code>HOST_DISTRIBUTED</code>.</p>
-  <div class="impl">
-    <strong>Telemetri yang saya hitung:</strong>
-    peak bridge (mV) → dikalikan <code>AD620_GAIN</code> → ditambah <code>TLC_OFFSET_V</code> → dikonversi ke kode ADC 12-bit.
-    Fungsi <code>active_blocks()</code> mengembalikan subset blok diagram yang harus “menyala” per fase — dipakai <code>gui_app._draw_diagram()</code>.
+  <div class="card">
+    <strong>Telemetri yang saya hitung</strong>
+    Peak bridge (mV) → × <code>AD620_GAIN</code> → + <code>TLC_OFFSET_V</code> → kode ADC 12-bit.
+    <code>active_blocks()</code> menyalakan blok diagram per fase di <code>gui_app._draw_diagram()</code>.
   </div>
 
   <h3>3.4 <code>signal_analysis.py</code> — bukti numerik filter</h3>
@@ -583,7 +827,7 @@ Peak match (seq vs par): OK</pre>
   <p>File: <code>Host-Simulation/src/distributed_nodes.py</code></p>
 
   <h3>5.1 Tiga proses OS terpisah</h3>
-  <table>
+  <div class="tbl-wrap"><table class="tbl">
     <tr><th>Fungsi</th><th>Peran</th><th>Pesan keluar</th></tr>
     <tr>
       <td><code>node_acquisition</code></td>
@@ -600,7 +844,7 @@ Peak match (seq vs par): OK</pre>
       <td><code>max(peaks)</code> → estimasi BP demo</td>
       <td>Print ke stdout (setara UI/log)</td>
     </tr>
-  </table>
+  </table></div>
 
   <h3>5.2 Mengapa <code>Queue</code> bukan shared memory?</h3>
   <p>
@@ -639,17 +883,17 @@ python gui.py      # demo visual — wajib untuk video
 python main.py     # bukti terminal paralel + distributed</pre>
 
   <h3>Checklist saat demo ke dosen</h3>
-  <table>
+  <div class="tbl-wrap"><table class="tbl">
     <tr><th>Langkah</th><th>Yang harus terlihat</th></tr>
     <tr><td>GUI → Mulai Simulasi</td><td>Fase berubah: inflate → hold → deflate → sensor → AFE → STM32 → Host parallel → distributed</td></tr>
     <tr><td>Grafik</td><td>Garis merah (hum 50 Hz terlihat) vs hijau (lebih halus); panel % penurunan hum</td></tr>
     <tr><td>Telemetri</td><td>Bridge mV, AD620 mV, offset V, kode ADC</td></tr>
     <tr><td>Terminal <code>main.py</code></td><td>Timing 3 mode + <code>Peak match: OK</code> + log Node A/B/C</td></tr>
-  </table>
+  </table></div>
 
   <!-- ========== MATKUL ========== -->
   <h2 id="matkul">8. Pemetaan IFB 206 (dengan bukti di repo)</h2>
-  <table>
+  <div class="tbl-wrap"><table class="tbl">
     <tr><th>Topik kuliah</th><th>Implementasi saya</th><th>Bukti</th></tr>
     <tr>
       <td>Data parallelism</td>
@@ -676,34 +920,37 @@ python main.py     # bukti terminal paralel + distributed</pre>
       <td>Filter hum cuff BP</td>
       <td>Notch 50 Hz + MA; kait roadmap CuffnCode</td>
     </tr>
-  </table>
+  </table></div>
 
   <h2 id="pelaksana">9. Pelaksana, checklist EVALUASI 3, referensi</h2>
-  <div class="impl">
-    <strong>Pelaksana tunggal:</strong> seluruh kode <code>Host-Simulation/</code>, GUI, benchmark, dan dokumentasi ini dikerjakan sendiri.
+  <div class="card card--success">
+    <strong>Pelaksana tunggal</strong>
+    Seluruh kode <code>Host-Simulation/</code>, GUI, benchmark, dan dokumentasi ini dikerjakan sendiri oleh Farhan Kamil Hermansyah.
   </div>
-  <table>
+  <div class="tbl-wrap"><table class="tbl">
     <tr><th>Nama</th><th>NRP</th><th>Kelas</th><th>Peran</th></tr>
     <tr><td><strong>Farhan Kamil Hermansyah</strong></td><td>152024150</td><td>CC</td><td>100% — implementasi &amp; dokumentasi</td></tr>
-  </table>
-  <table>
+  </table></div>
+  <div class="tbl-wrap"><table class="tbl">
     <tr><th>Deliverable</th><th>Status</th></tr>
     <tr><td>Kode Host-Simulation</td><td>✓</td></tr>
     <tr><td>README + dokumentasi implementasi (halaman ini)</td><td>✓</td></tr>
     <tr><td>GitHub Pages</td><td>✓ folder <code>/docs</code></td></tr>
     <tr><td>Video demo GUI</td><td>Unggah Instagram Lab</td></tr>
-  </table>
+  </table></div>
   <ul>
     <li><a href="https://github.com/Farmil23/CuffnCode">Farmil23/CuffnCode</a></li>
     <li><a href="https://github.com/Farmil23/CuffnCode/tree/main/Host-Simulation">Host-Simulation</a></li>
     <li><a href="https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode">CuffnCode hardware (upstream)</a></li>
     <li><a href="https://publish.obsidian.md/auralius/Published/CuffnCode">Obsidian — desain</a></li>
   </ul>
-  <p><small>Estimasi BP demo — bukan diagnosis medis. MPS20N0040D: hindari over-pressure pada hardware nyata.</small></p>
+  <p class="footer-note">Estimasi BP demo — bukan diagnosis medis. MPS20N0040D: hindari over-pressure pada hardware nyata.</p>
+
+  </main>
 
   <script>
     (function () {
-      var links = document.querySelectorAll(".float-nav a[data-section]");
+      var links = document.querySelectorAll(".side-nav a[data-section], .float-nav a[data-section]");
       var sections = [];
       links.forEach(function (a) {
         var id = a.getAttribute("data-section");
@@ -733,7 +980,7 @@ python main.py     # bukti terminal paralel + distributed</pre>
         topBtn.classList.toggle("visible", y > 400);
         var current = sections[0] ? sections[0].id : "";
         for (var i = 0; i < sections.length; i++) {
-          if (sections[i].el.offsetTop - 120 <= y) current = sections[i].id;
+          if (sections[i].el.offsetTop - 140 <= y) current = sections[i].id;
         }
         setActive(current);
       }, { passive: true });
