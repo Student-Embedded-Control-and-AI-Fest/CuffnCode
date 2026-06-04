@@ -5,82 +5,129 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CuffnCode — Host Simulation | ITENAS IFB 206</title>
   <style>
-    body { font-family: "Segoe UI", system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; color: #24292f; }
+    body { font-family: "Segoe UI", system-ui, sans-serif; max-width: 820px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; color: #24292f; }
     h1 { color: #0969da; }
-    h2 { margin-top: 1.5rem; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3rem; }
-    code { background: #f6f8fa; padding: 0.15rem 0.4rem; border-radius: 4px; }
-    pre { background: #f6f8fa; padding: 1rem; overflow-x: auto; border-radius: 6px; }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #d0d7de; padding: 0.5rem 0.75rem; text-align: left; }
+    h2 { margin-top: 1.75rem; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3rem; }
+    h3 { margin-top: 1.25rem; color: #424a53; }
+    code { background: #f6f8fa; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.92em; }
+    pre { background: #f6f8fa; padding: 1rem; overflow-x: auto; border-radius: 6px; font-size: 0.9em; }
+    table { border-collapse: collapse; width: 100%; margin: 0.75rem 0; }
+    th, td { border: 1px solid #d0d7de; padding: 0.5rem 0.75rem; text-align: left; vertical-align: top; }
     th { background: #f6f8fa; }
     a { color: #0969da; }
-    .badge { display: inline-block; background: #ddf4ff; color: #0969da; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.9rem; }
+    .badge { display: inline-block; background: #ddf4ff; color: #0969da; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.9rem; margin-right: 0.35rem; }
     .note { background: #fff8c5; border: 1px solid #d4a72c; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
     .note strong { color: #7d4e00; }
+    .ok { color: #1a7f37; }
+    ul.compact li { margin: 0.35rem 0; }
   </style>
 </head>
 <body>
-  <p class="badge">IFB 206 — Komputasi Paralel &amp; Sistem Terdistribusi · ITENAS</p>
+  <p>
+    <span class="badge">IFB 206</span>
+    <span class="badge">Komputasi Paralel &amp; Sistem Terdistribusi</span>
+    <span class="badge">EVALUASI 3</span>
+    <span class="badge">ITENAS 2025/2026</span>
+  </p>
+
   <h1>CuffnCode — Host Simulation</h1>
   <p>
-    Dokumentasi mini project <strong>CuffnCode</strong> (retrofitted blood pressure system).
-    Fokus tim: pemrosesan sinyal di <strong>PC Host</strong> — komputasi paralel &amp; sistem terdistribusi.
+    Mini project pada fork
+    <a href="https://github.com/Farmil23/CuffnCode">Farmil23/CuffnCode</a>
+    — simulasi lapisan <strong>PC Host</strong> untuk sistem tekanan darah
+    <strong>CuffnCode</strong> (retrofitted BP, IFAC Activity Fund).
   </p>
 
   <div class="note">
-    <strong>GUI tidak jalan di halaman web ini.</strong>
-    GitHub Pages hanya menampilkan dokumentasi (HTML). Aplikasi GUI (<code>gui.py</code>)
-    adalah program <strong>desktop Python</strong> (Tkinter) — dijalankan di laptop setelah clone repo.
-    Untuk demo visual di web: gunakan <strong>video Instagram Lab</strong> (20–30 detik) atau rekam layar GUI.
+    <strong>GUI tidak berjalan di halaman web ini.</strong>
+    GitHub Pages hanya menampilkan dokumentasi. Aplikasi
+    <code>python gui.py</code> adalah program <strong>desktop Tkinter</strong>.
+    Untuk penilaian visual: rekam layar GUI atau unggah video singkat ke Instagram Lab.
   </div>
 
-  <h2>Referensi</h2>
-  <ul>
-    <li><a href="https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode">CuffnCode (repo resmi)</a></li>
-    <li><a href="https://github.com/Farmil23/CuffnCode/tree/main/Host-Simulation">Program tim — Host-Simulation</a></li>
-    <li><a href="https://publish.obsidian.md/auralius/Published/CuffnCode">Desain — Obsidian CuffnCode</a></li>
-  </ul>
-
-  <h2>Menjalankan GUI (di komputer Anda)</h2>
+  <h2>Menjalankan di komputer Anda</h2>
   <pre><code>git clone https://github.com/Farmil23/CuffnCode.git
 cd CuffnCode/Host-Simulation
 pip install -r requirements.txt
-python gui.py</code></pre>
-  <p>Klik <strong>Mulai Simulasi</strong> di jendela aplikasi — diagram hardware + grafik SEBELUM/SESUDAH akan tampil.</p>
+python gui.py
+python main.py</code></pre>
 
-  <h2>Apa yang ditampilkan di web vs di laptop</h2>
+  <h2>Kesesuaian dengan mata kuliah</h2>
   <table>
-    <tr><th>Media</th><th>Isi</th></tr>
-    <tr><td>GitHub Pages (situs ini)</td><td>Dokumentasi, tim, cara install</td></tr>
-    <tr><td><code>python gui.py</code></td><td>Simulator interaktif + grafik</td></tr>
-    <tr><td>Video Instagram Lab</td><td>Demo singkat GUI untuk dosen</td></tr>
+    <tr><th>Topik IFB 206</th><th>Implementasi</th><th>Berkas</th></tr>
+    <tr>
+      <td>Data parallelism</td>
+      <td><code>multiprocessing.Pool.map</code> pada chunk waveform; task sama per chunk</td>
+      <td><code>parallel_pipeline.py</code></td>
+    </tr>
+    <tr>
+      <td>Scheduling / load balancing</td>
+      <td>Sequential vs parallel vs <code>chunksize=1</code> (dynamic)</td>
+      <td><code>run_benchmark()</code></td>
+    </tr>
+    <tr>
+      <td>Sistem terdistribusi</td>
+      <td>3 proses: Acquisition → Processing → Storage; <code>Queue</code></td>
+      <td><code>distributed_nodes.py</code></td>
+    </tr>
+    <tr>
+      <td>Studi kasus domain</td>
+      <td>Filter notch 50 Hz + MA pada sinyal cuff (roadmap CuffnCode)</td>
+      <td><code>filters.py</code></td>
+    </tr>
+    <tr>
+      <td>Demo</td>
+      <td>GUI diagram hardware + grafik SEBELUM/SESUDAH</td>
+      <td><code>gui.py</code></td>
+    </tr>
   </table>
 
-  <h2>Isi project</h2>
-  <ul>
-    <li><strong>GUI</strong> — simulasi alur hardware + grafik SEBELUM/SESUDAH filter</li>
-    <li><strong>Data parallelism</strong> — <code>multiprocessing.Pool</code> pada chunk sinyal</li>
-    <li><strong>Distributed</strong> — Node A (acquire) → B (process) → C (store)</li>
-    <li><strong>Filter</strong> — notch 50 Hz + moving average (hum killer roadmap)</li>
+  <h2>Arsitektur (konsep)</h2>
+  <pre><code>[Cuff + MPS20N0040D] → [AD620 + TLC2272] → [STM32 ADC]
+                              ↓
+                        [Host PC]
+              Data-parallel filter (Pool)
+              Distributed nodes A → B → C (Queue)</code></pre>
+
+  <h2>Isi program</h2>
+  <ul class="compact">
+    <li><strong>GUI</strong> — simulasi inflate/deflate, telemetri AFE/STM32, grafik filter</li>
+    <li><strong>Benchmark</strong> — waktu sequential / parallel / dynamic + verifikasi peak</li>
+    <li><strong>Distributed log</strong> — <code>[Node A]</code>, <code>[Node B]</code>, <code>[Node C]</code></li>
   </ul>
+
+  <h3>Catatan speedup</h3>
+  <p>
+    Pada data simulasi kecil (~4800 sampel), Windows sering menampilkan speedup &lt; 1 karena overhead
+    <em>spawn</em> proses. Untuk laporan: jelaskan pola paralel yang benar (peak sequential vs parallel cocok)
+    dan kapan speedup diharapkan naik (stream ADC lebih panjang / Linux).
+  </p>
+
+  <h2>Checklist EVALUASI 3</h2>
+  <table>
+    <tr><th>Deliverable</th><th>Status</th></tr>
+    <tr><td>Kode Host-Simulation</td><td class="ok">✓</td></tr>
+    <tr><td>README + dokumentasi</td><td class="ok">✓</td></tr>
+    <tr><td>GitHub Pages</td><td class="ok">✓ (folder <code>/docs</code>)</td></tr>
+    <tr><td>Video demo GUI</td><td>Tim unggah ke Instagram Lab</td></tr>
+  </table>
 
   <h2>Tim</h2>
   <table>
-    <tr><th>Nama</th><th>NRP</th><th>Kelas</th></tr>
-    <tr><td>Farhan Kamil Hermansyah</td><td>152024150</td><td>CC</td></tr>
-    <tr><td>Ratu Qolbu Maziah</td><td>152024151</td><td>CC</td></tr>
-    <tr><td>Syafa Meisya Fitria</td><td>152024182</td><td>AA</td></tr>
+    <tr><th>Nama</th><th>NRP</th><th>Kelas</th><th>Peran</th></tr>
+    <tr><td>Farhan Kamil Hermansyah</td><td>152024150</td><td>CC</td><td>Implementasi Host-Simulation</td></tr>
+    <tr><td>Ratu Qolbu Maziah</td><td>152024151</td><td>CC</td><td>Tim kelas</td></tr>
+    <tr><td>Syafa Meisya Fitria</td><td>152024182</td><td>AA</td><td>Tim kelas</td></tr>
   </table>
 
-  <h2>Hardware (referensi CuffnCode)</h2>
-  <table>
-    <tr><th>Komponen</th><th>Peran</th></tr>
-    <tr><td>MPS20N0040D</td><td>Sensor bridge (mV)</td></tr>
-    <tr><td>AD620 + TLC2272</td><td>Analog front end</td></tr>
-    <tr><td>STM32F411CE</td><td>ADC / kontrol pump &amp; valve</td></tr>
-    <tr><td>PC Host</td><td>Paralel + distributed processing</td></tr>
-  </table>
+  <h2>Referensi</h2>
+  <ul class="compact">
+    <li><a href="https://github.com/Farmil23/CuffnCode">Fork tim — Farmil23/CuffnCode</a></li>
+    <li><a href="https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode">CuffnCode resmi (hardware)</a></li>
+    <li><a href="https://publish.obsidian.md/auralius/Published/CuffnCode">Obsidian — desain CuffnCode</a></li>
+    <li><a href="https://github.com/Farmil23/CuffnCode/tree/main/Host-Simulation">Folder Host-Simulation</a></li>
+  </ul>
 
-  <p><small>Estimasi BP pada simulasi bersifat demo — bukan diagnosis medis.</small></p>
+  <p><small>Estimasi BP pada simulasi bersifat demo — bukan diagnosis medis. Sensor MPS20N0040D pada hardware nyata: hindari over-pressure.</small></p>
 </body>
 </html>
