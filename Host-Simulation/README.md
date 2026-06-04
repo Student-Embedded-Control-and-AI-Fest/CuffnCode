@@ -13,13 +13,22 @@ Referensi desain hardware: [Obsidian — CuffnCode](https://publish.obsidian.md/
 
 ---
 
-## Tim
+## Pelaksana
 
-| Nama | NRP | Kelas | Peran |
-|------|-----|-------|-------|
-| Farhan Kamil Hermansyah | 152024150 | CC | GUI, dokumentasi, integrasi repo |
-| Ratu Qolbu Maziah | 152024151 | CC | Parallel pipeline |
-| Syafa Meisya Fitria | 152024182 | AA | Distributed nodes, video demo |
+| Nama | NRP | Kelas |
+|------|-----|-------|
+| **Farhan Kamil Hermansyah** | 152024150 | CC |
+
+Seluruh modul **Host-Simulation** (GUI, pipeline paralel & terdistribusi, dokumentasi) dikerjakan oleh **Farhan Kamil Hermansyah**.
+
+---
+
+## Masalah & tujuan (ringkas)
+
+- **Masalah:** sinyal cuff lemah (mV) + hum 50 Hz; pemrosesan batch di Host harus cepat dan tersegmentasi seperti subsistem nyata.  
+- **Tujuan:** demonstrasi **komputasi paralel** (speedup filter) dan **sistem terdistribusi** (3 node A→B→C) tanpa hardware fisik di demo.
+
+Detail lengkap: [LAPORAN_AKHIR.md](../LAPORAN_AKHIR.md) di folder induk `LECTURE_10/`.
 
 ---
 

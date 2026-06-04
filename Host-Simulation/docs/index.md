@@ -122,13 +122,32 @@ $$\frac{56\,\text{k}}{47\,\text{k} + 56\,\text{k}} \times 3.3\,\text{V} \approx 
 
 ---
 
-## 7. Tim & Mata Kuliah
+## 7. Pelaksana & Mata Kuliah
+
+| Nama | NRP | Kelas |
+|------|-----|-------|
+| **Farhan Kamil Hermansyah** | 152024150 | CC |
+
+Seluruh kontribusi **Host-Simulation** (komputasi paralel, sistem terdistribusi, GUI, dokumentasi) dikerjakan oleh pelaksana di atas.
 
 | Item | Nilai |
 |------|-------|
-| Mata kuliah | Komputasi Paralel dan Sistem Terdistribusi |
-| Folder | `LECTURE_10` |
+| Mata kuliah | IFB 206 — Komputasi Paralel dan Sistem Terdistribusi |
+| Institusi | Institut Teknologi Nasional (ITENAS) |
+| Folder | `Host-Simulation/` |
 | Referensi | [CuffnCode GitHub](https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode) |
+
+### Masalah yang diselesaikan
+
+- Sinyal tekanan cuff **lemah (mV)** dan terganggu **hum 50 Hz** sebelum estimasi BP.  
+- Pemrosesan batch di Host membutuhkan **paralelisme** (speedup filter) dan arsitektur **terdistribusi** (Acquisition → Processing → Storage).  
+- Demonstrasi kuliah dilakukan **tanpa hardware fisik** melalui simulator GUI + pipeline terminal.
+
+### Tujuan
+
+1. Mensimulasikan alur oscillometric dan filter Host (notch + moving average).  
+2. Mendemonstrasikan **data parallelism** dan **message passing** antar node.  
+3. Mendokumentasikan project untuk **EVALUASI 3** (GitHub + Pages + video demo).
 
 ---
 
