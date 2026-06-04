@@ -49,13 +49,25 @@
     }
     a { color: #60a5fa; text-decoration: none; transition: color 0.15s; }
     a:hover { color: #93c5fd; text-decoration: underline; }
-    .page {
-      max-width: var(--content-max);
+    /* Konten + nav sebagai satu blok di tengah layar */
+    .site-layout {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 2rem;
+      width: 100%;
+      max-width: calc(var(--content-max) + var(--nav-width) + 4rem);
       margin: 0 auto;
-      padding: 2rem 1.5rem 5rem;
+      padding: 2rem 1.25rem 5rem;
     }
-    @media (min-width: 1200px) {
-      .page { margin-right: calc(var(--nav-width) + 2rem); margin-left: auto; padding-left: 2rem; }
+    .page {
+      flex: 1 1 auto;
+      width: 100%;
+      max-width: var(--content-max);
+      min-width: 0;
+      margin: 0;
+      padding: 0;
     }
     /* Hero */
     .hero {
@@ -254,9 +266,12 @@
     }
     /* Side navigation */
     .side-nav {
-      position: fixed;
-      z-index: 1000;
-      background: rgba(15, 20, 28, 0.88);
+      flex: 0 0 var(--nav-width);
+      position: sticky;
+      top: 2rem;
+      align-self: flex-start;
+      z-index: 100;
+      background: rgba(15, 20, 28, 0.92);
       border: 1px solid var(--border-strong);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow);
@@ -307,22 +322,29 @@
     .side-nav a.active .dot { background: #fff; box-shadow: 0 0 8px rgba(255,255,255,0.5); }
     @media (min-width: 1200px) {
       .side-nav {
-        right: 1.25rem;
-        top: 50%;
-        transform: translateY(-50%);
         width: var(--nav-width);
-        max-height: 88vh;
+        max-height: calc(100vh - 4rem);
         overflow-y: auto;
       }
       .side-nav__links { padding: 0.25rem 0.6rem 0.75rem; }
     }
     @media (max-width: 1199px) {
+      .site-layout {
+        flex-direction: column;
+        align-items: stretch;
+        max-width: var(--content-max);
+        padding-bottom: 6rem;
+      }
       .side-nav {
+        position: fixed;
         left: 50%;
         bottom: 1rem;
+        top: auto;
         transform: translateX(-50%);
+        flex: none;
         width: auto;
         max-width: calc(100vw - 2rem);
+        z-index: 1000;
       }
       .side-nav__title { display: none; }
       .side-nav__links {
@@ -334,7 +356,6 @@
       }
       .side-nav a { padding: 0.4rem 0.65rem; font-size: 0.72rem; }
       .side-nav .label { display: none; }
-      .page { padding-bottom: 6rem; }
     }
     .top-link {
       position: fixed;
@@ -366,25 +387,9 @@
 </head>
 <body>
 
-  <nav class="side-nav float-nav" aria-label="Navigasi bagian">
-    <span class="side-nav__title">Navigasi</span>
-    <div class="side-nav__links">
-      <a href="#atas" data-section="atas"><span class="dot"></span><span class="label">Awal</span></a>
-      <a href="#solusi" data-section="solusi"><span class="dot"></span><span class="label">Solusi</span></a>
-      <a href="#demo" data-section="demo"><span class="dot"></span><span class="label">Demo</span></a>
-      <a href="#kontribusi" data-section="kontribusi"><span class="dot"></span><span class="label">Kontribusi</span></a>
-      <a href="#desain" data-section="desain"><span class="dot"></span><span class="label">Desain</span></a>
-      <a href="#modul" data-section="modul"><span class="dot"></span><span class="label">Modul</span></a>
-      <a href="#paralel" data-section="paralel"><span class="dot"></span><span class="label">Paralel</span></a>
-      <a href="#distributed" data-section="distributed"><span class="dot"></span><span class="label">Distributed</span></a>
-      <a href="#gui" data-section="gui"><span class="dot"></span><span class="label">GUI</span></a>
-      <a href="#jalankan" data-section="jalankan"><span class="dot"></span><span class="label">Jalankan</span></a>
-      <a href="#matkul" data-section="matkul"><span class="dot"></span><span class="label">Matkul</span></a>
-      <a href="#pelaksana" data-section="pelaksana"><span class="dot"></span><span class="label">Pelaksana</span></a>
-    </div>
-  </nav>
   <a href="#atas" class="top-link" id="topBtn" aria-label="Kembali ke atas">↑</a>
 
+  <div class="site-layout">
   <main class="page" id="atas">
     <header class="hero">
       <div class="hero__badges">
@@ -406,7 +411,7 @@
           Jalankan <code>python gui.py</code> di laptop (Tkinter). Untuk bukti visual: rekam layar atau video Instagram Lab.
         </div>
       </div>
-      <p class="nav-hint">Klik item di panel <strong>Navigasi</strong> (kanan desktop / bawah HP) untuk loncat ke bagian.</p>
+      <p class="nav-hint">Klik panel <strong>Navigasi</strong> di samping konten (desktop) atau di bawah layar (HP) untuk loncat ke bagian.</p>
     </header>
 
   <!-- ========== SOLUSI ========== -->
@@ -947,6 +952,25 @@ python main.py     # bukti terminal paralel + distributed</pre>
   <p class="footer-note">Estimasi BP demo — bukan diagnosis medis. MPS20N0040D: hindari over-pressure pada hardware nyata.</p>
 
   </main>
+
+  <nav class="side-nav float-nav" aria-label="Navigasi bagian">
+    <span class="side-nav__title">Navigasi</span>
+    <div class="side-nav__links">
+      <a href="#atas" data-section="atas"><span class="dot"></span><span class="label">Awal</span></a>
+      <a href="#solusi" data-section="solusi"><span class="dot"></span><span class="label">Solusi</span></a>
+      <a href="#demo" data-section="demo"><span class="dot"></span><span class="label">Demo</span></a>
+      <a href="#kontribusi" data-section="kontribusi"><span class="dot"></span><span class="label">Kontribusi</span></a>
+      <a href="#desain" data-section="desain"><span class="dot"></span><span class="label">Desain</span></a>
+      <a href="#modul" data-section="modul"><span class="dot"></span><span class="label">Modul</span></a>
+      <a href="#paralel" data-section="paralel"><span class="dot"></span><span class="label">Paralel</span></a>
+      <a href="#distributed" data-section="distributed"><span class="dot"></span><span class="label">Distributed</span></a>
+      <a href="#gui" data-section="gui"><span class="dot"></span><span class="label">GUI</span></a>
+      <a href="#jalankan" data-section="jalankan"><span class="dot"></span><span class="label">Jalankan</span></a>
+      <a href="#matkul" data-section="matkul"><span class="dot"></span><span class="label">Matkul</span></a>
+      <a href="#pelaksana" data-section="pelaksana"><span class="dot"></span><span class="label">Pelaksana</span></a>
+    </div>
+  </nav>
+  </div>
 
   <script>
     (function () {
