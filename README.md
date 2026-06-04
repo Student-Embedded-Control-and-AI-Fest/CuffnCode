@@ -65,6 +65,15 @@ We will use STM32F411CE (the black pill) as our digital processor.
 - PCB layouting.
 - Performance evaluations.
 
+## Host simulation — parallel & distributed (ITENAS IFB 206)
+
+Tim kelas — Komputasi Paralel: simulasi pemrosesan sinyal cuff di PC Host
+(data parallelism + 3-node distributed pipeline + GUI).
+
+- Folder: [`Host-Simulation/`](Host-Simulation/)
+- Dokumentasi: [`Host-Simulation/docs/`](Host-Simulation/docs/)
+- Referensi desain: [Obsidian CuffnCode](https://publish.obsidian.md/auralius/Published/CuffnCode)
+
 ## Credits
 
 - Instrumentation amplifier intro: https://www.youtube.com/watch?v=O0-iczIq1aU
