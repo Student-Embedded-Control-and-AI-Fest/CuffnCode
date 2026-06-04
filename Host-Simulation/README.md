@@ -15,11 +15,11 @@ Referensi desain hardware: [Obsidian — CuffnCode](https://publish.obsidian.md/
 
 ## Tim
 
-| Nama | NRP | Peran |
-|------|-----|-------|
-| *(isi)* | *(isi)* | GUI & dokumentasi |
-| *(isi)* | *(isi)* | Parallel pipeline |
-| *(isi)* | *(isi)* | Distributed nodes |
+| Nama | NRP | Kelas | Peran |
+|------|-----|-------|-------|
+| Farhan Kamil Hermansyah | 152024150 | CC | GUI, dokumentasi, integrasi repo |
+| Ratu Qolbu Maziah | 152024151 | CC | Parallel pipeline |
+| Syafa Meisya Fitria | 152024182 | AA | Distributed nodes, video demo |
 
 ---
 
