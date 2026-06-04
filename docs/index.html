@@ -15,6 +15,8 @@
     th { background: #f6f8fa; }
     a { color: #0969da; }
     .badge { display: inline-block; background: #ddf4ff; color: #0969da; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.9rem; }
+    .note { background: #fff8c5; border: 1px solid #d4a72c; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+    .note strong { color: #7d4e00; }
   </style>
 </head>
 <body>
@@ -25,6 +27,13 @@
     Fokus tim: pemrosesan sinyal di <strong>PC Host</strong> — komputasi paralel &amp; sistem terdistribusi.
   </p>
 
+  <div class="note">
+    <strong>GUI tidak jalan di halaman web ini.</strong>
+    GitHub Pages hanya menampilkan dokumentasi (HTML). Aplikasi GUI (<code>gui.py</code>)
+    adalah program <strong>desktop Python</strong> (Tkinter) — dijalankan di laptop setelah clone repo.
+    Untuk demo visual di web: gunakan <strong>video Instagram Lab</strong> (20–30 detik) atau rekam layar GUI.
+  </div>
+
   <h2>Referensi</h2>
   <ul>
     <li><a href="https://github.com/Student-Embedded-Control-and-AI-Fest/CuffnCode">CuffnCode (repo resmi)</a></li>
@@ -32,11 +41,20 @@
     <li><a href="https://publish.obsidian.md/auralius/Published/CuffnCode">Desain — Obsidian CuffnCode</a></li>
   </ul>
 
-  <h2>Menjalankan program</h2>
+  <h2>Menjalankan GUI (di komputer Anda)</h2>
   <pre><code>git clone https://github.com/Farmil23/CuffnCode.git
 cd CuffnCode/Host-Simulation
 pip install -r requirements.txt
 python gui.py</code></pre>
+  <p>Klik <strong>Mulai Simulasi</strong> di jendela aplikasi — diagram hardware + grafik SEBELUM/SESUDAH akan tampil.</p>
+
+  <h2>Apa yang ditampilkan di web vs di laptop</h2>
+  <table>
+    <tr><th>Media</th><th>Isi</th></tr>
+    <tr><td>GitHub Pages (situs ini)</td><td>Dokumentasi, tim, cara install</td></tr>
+    <tr><td><code>python gui.py</code></td><td>Simulator interaktif + grafik</td></tr>
+    <tr><td>Video Instagram Lab</td><td>Demo singkat GUI untuk dosen</td></tr>
+  </table>
 
   <h2>Isi project</h2>
   <ul>
