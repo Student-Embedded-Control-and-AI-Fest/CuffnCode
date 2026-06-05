@@ -1,0 +1,3 @@
+Data processing becomes faster with parallel execution.
+Multiple CPU cores can work together.
+Python provides multiprocessing module.

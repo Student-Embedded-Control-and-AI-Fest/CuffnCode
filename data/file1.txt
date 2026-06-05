@@ -1,0 +1,4 @@
+Python is a programming language.
+Python is easy to learn.
+Parallel computing allows multiple processes.
+Python multiprocessing is powerful.

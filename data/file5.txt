@@ -1,0 +1,3 @@
+GitHub is used for version control.
+Students use GitHub to store projects.
+Documentation is important.
