@@ -1,73 +1,101 @@
-<p align="center">
-  <img src="./images/cuffncode.png" width="200">
-</p>
+# Parallel File Analyzer
 
-<h4 align="center">This project is funded by IFAC Activity Fund (July 2025 to June 2026)</h4>
+## Evaluasi 3
 
-__CuffnCode__ is a retrofitted blood pressure measurement system for teaching and research. In the long term, it aims to become an overinstrumented platform for developing and testing signal processing and control algorithms.
+### Mata Kuliah
+Komputasi Paralel dan Sistem Terdistribusi
 
-## Retrofitted pump system
+---
 
-<img src="./images/complete_device.png" width="600"> 
+## Latar Belakang
 
-## Analog Front End Design
-A reproducible, low-noise analog front end for millivolt bridge sensors (e.g., MPS20N0040D, typically used for __hobbyist__ sphygmomanometer), using AD620 instrumentation amplifier and TLC2272 level shift. This analog front end should also work for other millivolt instruments.
+Komputasi paralel merupakan teknik menjalankan beberapa proses secara bersamaan untuk meningkatkan efisiensi komputasi.
 
+Python menyediakan modul multiprocessing yang memungkinkan pemanfaatan beberapa CPU core secara bersamaan.
 
-### TINA-TI
+---
 
-AC simulation with TINA-TI:
+## Tujuan
 
-<img src="./images/AFE.png" width="600"> 
+- Memahami konsep komputasi paralel.
+- Mengimplementasikan multiprocessing.
+- Melakukan analisis beberapa file secara bersamaan.
 
-<img src="./images/tina-ac-diag.jpg" width="500"> 
+---
 
-Instrumentation amplifier gain:
+## Metode
 
-$$ G = 1 + \frac{49.4\text{k}\Omega}{R_g} = 1 + \frac{49.4\text{k}\Omega}{470} \approx 105$$
+Program membaca lima file text.
 
-TLC2272 offset:
+Setiap file diproses oleh process yang berbeda menggunakan multiprocessing Pool.
 
-$$ \frac{56 \text{k}}{47\text{k} + 56 \text{k}} \times 3.3 V \approx 1.5 V$$
+Informasi yang dihitung:
 
+- Jumlah baris
+- Jumlah kata
+- Jumlah karakter
+- Kata yang paling sering muncul
 
+---
 
-### MPS20N0040D
-The MPS20N0040D is a millivolt-level bridge (≈50–100 mV full-scale; 4–6 kΩ)
+## Flowchart
 
-| <img src="./images/mps20n0040d_1.png" width="300"> | <img src="./images/mps20n0040d_2.png" width="300"> |
-| ----------------------------------------- | ----------------------------------------- |
+```
+Start
 
-### TLC2272 (Dual, Low-Noise, Rail-To-Rail Operational Amplifier)
-This will be used to offset the instrumentation amplifier, giving headroom for possible undershoot or for signal that goes both ways (positive and negative).
+↓
 
-<img src="./images/tlc2272.png" width="300"> 
+Load Files
 
-### AD620
-This is the instrumentation amplifier that is relatively cheap and widely available in Indonesian market.
+↓
 
-| <img src="./images/ad620_1.png" width="150"> | <img src="./images/ad620_2.png" width="150"> |
-| ----------------------------------------- | ----------------------------------------- |
+Create Process Pool
 
-## Digital Controller
-We will use STM32F411CE (the black pill) as our digital processor.
+↓
 
-| <img src="./images/prototype1.png" width="250"> | <img src="./images/prototype2.png" width="330"> |
-| ----------------------------------------- | ----------------------------------------- |
+Analyze File 1
 
-## Safety & Notes
+Analyze File 2
 
-- The MPS20N0040D is fragile—avoid over-pressure.
-- If powering from USB, beware ground noise from the host PC. A ferrite on the USB cable can help.
+Analyze File 3
 
-## Next-to-Do
-- 50/60 Hz notch filter (hum killer).
-- PCB layouting.
-- Performance evaluations.
+Analyze File 4
 
-## Credits
+Analyze File 5
 
-- Instrumentation amplifier intro: https://www.youtube.com/watch?v=O0-iczIq1aU
-- INA333 review with AD620 suggestion: https://blog.robertelder.org/cjmcu-333-ina-333-instrumentation-amplifier/
-- A Designer’s Guide to Instrumentation Amplifiers (3rd Edition) https://www.analog.com/media/en/training-seminars/design-handbooks/designers-guide-instrument-amps-complete.pdf
+↓
 
+Collect Result
+
+↓
+
+Display Output
+
+↓
+
+Finish
+```
+
+---
+
+## Hasil
+
+Program berhasil memproses lima file secara paralel.
+
+Contoh output:
+
+| File | Words | Lines |
+|------|---------|---------|
+|file1.txt|19|4|
+|file2.txt|17|3|
+|file3.txt|12|2|
+|file4.txt|15|3|
+|file5.txt|15|3|
+
+---
+
+## Developer
+
+Nama : Rizky Rifansa Alfariz
+NIM : 152024176
+Kelas : CC

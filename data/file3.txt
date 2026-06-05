@@ -1,0 +1,2 @@
+Distributed systems divide workloads across machines.
+Parallel systems divide workloads across processors.
