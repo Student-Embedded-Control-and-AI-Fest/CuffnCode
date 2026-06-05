@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+
+<html lang="id">
+
+<head>
+
+```
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>
+    Distributed Queue Management System
+</title>
+
+<link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet">
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}">
+```
+
+</head>
+
+<body>
+
+<div class="container py-3">
+
+```
+<div class="main-card">
+
+    <div class="text-center mb-4">
+
+        <h1 class="title">
+            Distributed Queue Management System
+        </h1>
+
+        <p class="subtitle">
+            Simulasi Komputasi Paralel Menggunakan Python Flask dan Multiprocessing
+        </p>
+
+    </div>
+
+    <!-- INPUT -->
+
+    <div class="row g-3 align-items-end">
+
+        <div class="col-md-4">
+
+            <label class="form-label">
+                Jumlah Tugas
+            </label>
+
+            <input
+                type="number"
+                id="tasks"
+                class="form-control modern-input"
+                value="10">
+
+        </div>
+
+        <div class="col-md-4">
+
+            <label class="form-label">
+                Jumlah Worker
+            </label>
+
+            <input
+                type="number"
+                id="workers"
+                class="form-control modern-input"
+                value="2">
+
+        </div>
+
+        <div class="col-md-4">
+
+            <button
+                class="btn btn-modern w-100"
+                onclick="startSimulation()">
+
+                Mulai Simulasi
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- STATISTICS -->
+
+    <div class="row mt-4 g-3">
+
+        <div class="col-md-2">
+
+            <div class="stat-card">
+
+                <h6>Total Task</h6>
+
+                <h2 id="taskCount">
+                    0
+                </h2>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-2">
+
+            <div class="stat-card">
+
+                <h6>Worker</h6>
+
+                <h2 id="workerCount">
+                    0
+                </h2>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="stat-card">
+
+                <h6>Execution Time</h6>
+
+                <h2 id="timeResult">
+                    0s
+                </h2>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-2">
+
+            <div class="stat-card">
+
+                <h6>Speed Up</h6>
+
+                <h2 id="speedUp">
+                    0x
+                </h2>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="stat-card">
+
+                <h6>Efficiency</h6>
+
+                <h2 id="efficiencyCard">
+                    0%
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- PROGRESS -->
+
+    <div class="log-card mt-4">
+
+        <h5 class="mb-3">
+            Overall Progress
+        </h5>
+
+        <div class="progress">
+
+            <div
+                id="progressBar"
+                class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                role="progressbar"
+                style="width:0%">
+
+                0%
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- STATUS -->
+
+    <div class="row mt-4 g-3">
+
+        <div class="col-md-6">
+
+            <div class="log-card">
+
+                <h5 class="mb-3">
+
+                    Worker Status
+
+                </h5>
+
+                <div id="workerStatus">
+
+                    <div class="worker-log">
+
+                        Menunggu simulasi...
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6">
+
+            <div class="log-card">
+
+                <h5 class="mb-3">
+
+                    Performance Analysis
+
+                </h5>
+
+                <p>
+
+                    Serial Time :
+                    <strong id="serialTime">
+                        0 s
+                    </strong>
+
+                </p>
+
+                <p>
+
+                    Efficiency :
+                    <strong id="efficiencyAnalysis">
+                        0%
+                    </strong>
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- DISTRIBUTION -->
+
+    <div class="log-card mt-4">
+
+        <h5 class="mb-3">
+
+            Worker Distribution
+
+        </h5>
+
+        <div id="workerDistribution">
+
+            <div class="worker-log">
+
+                Menunggu simulasi...
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- LOG -->
+
+    <div class="log-card mt-4">
+
+        <div
+            class="d-flex
+                   justify-content-between
+                   align-items-center
+                   mb-3">
+
+            <h5 class="m-0">
+
+                Execution Log
+
+            </h5>
+
+            <span class="badge bg-success">
+
+                Parallel Processing
+
+            </span>
+
+        </div>
+
+        <div id="resultBox">
+
+            <div class="worker-log">
+
+                Belum ada proses yang dijalankan.
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+```
+
+</div>
+
+<script
+    src="{{ url_for('static', filename='script.js') }}">
+</script>
+
+</body>
+</html>
