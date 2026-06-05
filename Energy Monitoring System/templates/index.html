@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Monitoring System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="container">
+ 
+    <div class="header">
+        <h1>⚡ Energy Monitoring System</h1>
+    </div>
+ 
+    <div class="stats-grid">
+        <div class="card">
+            <h3>Total Building Watt</h3>
+            <h2 id="totalPower">0 W</h2>
+        </div>
+        <div class="card">
+            <h3>Total Rooms</h3>
+            <h2 id="totalRooms">0</h2>
+        </div>
+        <div class="card">
+            <h3>Active Devices</h3>
+            <h2 id="activeDevices">0</h2>
+        </div>
+        <div class="card">
+            <h3>Efficiency Score</h3>
+            <h2 id="efficiency">100%</h2>
+        </div>
+    </div>
+ 
+    <div class="main-grid">
+ 
+        <div class="left-panel">
+ 
+            <div class="panel">
+                <h2>Kelola Room</h2>
+                <div class="add-room-row">
+                    <input type="text" id="roomName" placeholder="Ketik nama room...">
+                    <button onclick="addRoom()">Tambahkan</button>
+                </div>
+            </div>
+ 
+            <div class="panel">
+                <h2>Kelola Device</h2>
+                <div class="add-device-row">
+                    <input type="text" id="deviceName" placeholder="Ketik nama device">
+                    <input type="number" id="deviceWatt" placeholder="Masukkan watt">
+                    <select id="deviceRoom"></select>
+                    <button id="btnSubmitDevice" onclick="addDevice()">Tambahkan</button>
+                </div>
+            </div>
+ 
+            <div class="panel">
+                <h2>Daftar Device</h2>
+                <table class="on-off-table">
+                    <thead>
+                        <tr>
+                            <th>Room</th>
+                            <th>Device</th>
+                            <th>Watt</th>
+                            <th>On/Off</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="deviceTableBody">
+                        <tr><td colspan="5" style="text-align:center;color:#aaa;padding:12px;">Belum ada device</td></tr>
+                    </tbody>
+                </table>
+            </div>
+ 
+            <div class="panel">
+                <h2>Power Usage History</h2>
+                <canvas id="powerChart" height="120"></canvas>
+            </div>
+ 
+        </div>
+ 
+        <div class="right-panel">
+ 
+            <div class="panel">
+                <h2>Top Device Watt</h2>
+                <div class="info-box" id="topDevice">-</div>
+            </div>
+ 
+            <div class="panel">
+                <h2>Top Room Watt</h2>
+                <div class="info-box" id="highestRoom">-</div>
+            </div>
+ 
+            <div class="panel">
+                <h2>Recommendation</h2>
+                <div class="info-box">
+                    <span id="recommendation">Normal</span>
+                </div>
+            </div>
+ 
+            <div class="panel">
+                <h2>Room Monitoring</h2>
+                <table class="room-monitor-table">
+                    <tbody id="roomUsage"></tbody>
+                </table>
+            </div>
+ 
+            <div class="panel">
+                <h2>Distributed Workflow</h2>
+                <ul class="workflow-list">
+                    <li>Node A : Data Collection</li>
+                    <li>Node B : Energy Analysis</li>
+                    <li>Node C : Recommendation Engine</li>
+                    <li>Node D : Dashboard Monitoring</li>
+                </ul>
+            </div>
+ 
+        </div>
+    </div>
+</div>
+ 
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
