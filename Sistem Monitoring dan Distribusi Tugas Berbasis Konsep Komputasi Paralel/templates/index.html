@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow MPI Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <h2>TaskFlow MPI</h2>
+
+    <a href="#dashboard">Dashboard</a>
+    <a href="#task">Task Manager</a>
+    <a href="#worker">Worker Monitor</a>
+    <a href="#performance">Performance</a>
+    <a href="#gantt">Gantt Chart</a>
+    <a href="#log">Execution Log</a>
+
+</div>
+
+<div class="main">
+
+    <!-- DASHBOARD -->
+
+    <section id="dashboard" class="topbar">
+
+        <div>
+
+            <h1>TaskFlow MPI Dashboard</h1>
+
+            <p>
+                Simulasi Komputasi Paralel Menggunakan
+                Konsep MPI Scatter - Compute - Gather
+            </p>
+
+        </div>
+
+        <div>
+
+            {% if is_running %}
+
+            <span class="running-status">
+                ● Running
+            </span>
+
+            {% else %}
+
+            <span class="idle-status">
+                ● Idle
+            </span>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+    <!-- CARDS -->
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>Total Task</h3>
+            <p>{{ total_tasks }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Worker</h3>
+            <p>{{ workers_count }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Running</h3>
+            <p>{{ running_count }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Done</h3>
+            <p>{{ done_count }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Pending</h3>
+            <p>{{ pending_count }}</p>
+        </div>
+
+        <div class="card">
+            <h3>High Priority</h3>
+            <p>{{ high_priority_count }}</p>
+        </div>
+
+    </div>
+
+    <!-- PROGRESS -->
+
+    <section class="panel">
+
+        <h2>Overall Progress</h2>
+
+        <div class="progress-container">
+
+            <div class="progress-bar"
+                 style="width: {{ progress }}%;">
+            </div>
+
+        </div>
+
+        <p class="progress-text">
+            {{ progress }}% Complete
+        </p>
+
+    </section>
+
+    <!-- INPUT TASK -->
+
+    <section id="task" class="panel">
+
+        <h2>Tambah Task</h2>
+
+        <form method="POST">
+
+            <div class="form-grid">
+
+                <input
+                    type="text"
+                    name="task"
+                    placeholder="Nama Tugas"
+                    required>
+
+                <select name="category">
+
+                    <option>Kuliah</option>
+                    <option>Kerja</option>
+                    <option>Rumah</option>
+                    <option>Belanja</option>
+                    <option>Lainnya</option>
+
+                </select>
+
+                <select name="priority">
+
+                    <option>High</option>
+                    <option>Medium</option>
+                    <option>Low</option>
+
+                </select>
+
+                <input
+                    type="number"
+                    name="estimate"
+                    placeholder="Estimasi Menit">
+
+            </div>
+
+            <button
+                class="btn-primary"
+                name="action"
+                value="add">
+
+                Tambah Task
+
+            </button>
+
+        </form>
+
+    </section>
+
+    <!-- CONTROL -->
+
+    <section class="panel">
+
+        <h2>Control Panel</h2>
+
+        <form method="POST">
+
+            <div class="button-group">
+
+                <button
+                    class="start"
+                    name="action"
+                    value="start">
+
+                    MPI Scatter
+
+                </button>
+
+                <button
+                    class="step"
+                    name="action"
+                    value="step">
+
+                    Step Process
+
+                </button>
+
+                <button
+                    class="refresh"
+                    name="action"
+                    value="refresh">
+
+                    Refresh
+
+                </button>
+
+                <button
+                    class="warning"
+                    name="action"
+                    value="reset_status">
+
+                    Reset Status
+
+                </button>
+
+                <button
+                    class="danger"
+                    name="action"
+                    value="reset_all">
+
+                    Reset All
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+    <!-- WORKER CONFIG -->
+
+    <section class="panel">
+
+        <h2>Worker Configuration</h2>
+
+        <form method="POST">
+
+            <div class="form-grid">
+
+                <select name="workers">
+
+                    <option value="2">2 Worker</option>
+                    <option value="3">3 Worker</option>
+                    <option value="4" selected>4 Worker</option>
+                    <option value="5">5 Worker</option>
+                    <option value="6">6 Worker</option>
+
+                </select>
+
+                <button
+                    class="btn-primary"
+                    name="action"
+                    value="set_worker">
+
+                    Set Worker
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+    <!-- TASK TABLE -->
+
+    <section class="panel">
+
+        <h2>Task List</h2>
+
+        <table>
+
+            <tr>
+                <th>ID</th>
+                <th>Task</th>
+                <th>Kategori</th>
+                <th>Priority</th>
+                <th>Estimasi</th>
+                <th>Worker</th>
+                <th>Status</th>
+                <th>Aksi</th>
+            </tr>
+
+            {% for task in tasks %}
+
+            <tr>
+
+                <td>{{ task.id }}</td>
+                <td>{{ task.name }}</td>
+                <td>{{ task.category }}</td>
+                <td>{{ task.priority }}</td>
+                <td>{{ task.estimate }}</td>
+                <td>{{ task.worker }}</td>
+
+                <td>
+                    <span class="{{ task.status|lower }}">
+                        {{ task.status }}
+                    </span>
+                </td>
+
+                <td>
+
+                    <form method="POST">
+
+                        <input
+                            type="hidden"
+                            name="task_id"
+                            value="{{ task.id }}">
+
+                        <button
+                            class="delete-btn"
+                            name="action"
+                            value="delete">
+
+                            Delete
+
+                        </button>
+
+                    </form>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+    </section>
+
+    <!-- WORKER MONITOR -->
+
+    <section id="worker" class="panel">
+
+        <h2>Worker Monitoring</h2>
+
+        <div class="worker-grid">
+
+            {% for worker in worker_progress %}
+
+            <div class="worker-card">
+
+                <h3>
+                    Worker {{ worker.worker }}
+                </h3>
+
+                <p>Total Task : {{ worker.total }}</p>
+                <p>Done : {{ worker.done }}</p>
+                <p>Progress : {{ worker.progress }}%</p>
+
+                <div class="worker-progress">
+
+                    <div class="worker-progress-bar"
+                         style="width:
+                         {{ worker.progress }}%;">
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</div>
+
+</body>
+</html>
