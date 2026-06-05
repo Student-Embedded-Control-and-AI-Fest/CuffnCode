@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parallel Computing Visualization Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="theme-dark">
+  <div class="app-layout">
+    <header class="main-header">
+      <div class="header-container">
+        <div class="header-left">
+          <div class="logo-brand">
+            <div class="logo"></div>
+            <div class="brand-text">
+              <h1>Parallel Computing Simulator</h1>
+              <p>Interactive simulation and performance analysis</p>
+            </div>
+          </div>
+        </div>
+        <nav class="header-nav" aria-label="Application sections">
+          <a href="#dashboard" class="nav-item active">Dashboard</a>
+          <a href="#tasks" class="nav-item">Task Manager</a>
+          <a href="#processors" class="nav-item">Processor Config</a>
+          <a href="#simulation" class="nav-item">Simulation</a>
+          <a href="#analytics" class="nav-item">Analytics</a>
+          <a href="#education" class="nav-item">Education</a>
+        </nav>
+        <div class="header-right">
+          <button id="themeToggle" class="theme-toggle" type="button" aria-pressed="false">Light Mode</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="hero-compact">
+        <h2>Parallel Computing Visualization Simulator</h2>
+        <p>Interactive simulation and performance analysis for parallel computing concepts.</p>
+      </section>
+
+      <section class="stats-section">
+        <article class="stat-card stat-primary">
+          <div class="stat-header">
+            <span class="stat-icon">⏱️</span>
+            <p>Total Tasks</p>
+          </div>
+          <h3 id="heroTotalTasks">0</h3>
+          <p class="stat-note">Active tasks in the current simulation queue</p>
+        </article>
+        <article class="stat-card stat-secondary">
+          <div class="stat-header">
+            <span class="stat-icon">⚙️</span>
+            <p>Processors</p>
+          </div>
+          <h3 id="heroProcessors">4</h3>
+          <p class="stat-note">Configured processing units available for scheduling</p>
+        </article>
+        <article class="stat-card stat-accent">
+          <div class="stat-header">
+            <span class="stat-icon">⚡</span>
+            <p>Speedup</p>
+          </div>
+          <h3 id="heroSpeedup">0.00x</h3>
+          <p class="stat-note">Parallel acceleration compared to serial execution</p>
+        </article>
+        <article class="stat-card stat-accent-soft">
+          <div class="stat-header">
+            <span class="stat-icon">📈</span>
+            <p>Efficiency</p>
+          </div>
+          <h3 id="heroEfficiency">0%</h3>
+          <p class="stat-note">Normalized processor efficiency score</p>
+        </article>
+      </section>
+
+      <div class="main-grid">
+        <section id="tasks" class="section card-section">
+          <div class="section-title">
+            <h3>Task Manager</h3>
+            <p>Create and organize computation tasks for the scheduler</p>
+          </div>
+          <div class="card-content">
+            <div class="task-form-wrapper">
+              <h4>Task Details</h4>
+              <form id="taskForm" class="task-form">
+                <label for="taskName">Task Name</label>
+                <input id="taskName" type="text" placeholder="Enter task name" required />
+
+                <label for="taskTime">Execution Time (ms)</label>
+                <input id="taskTime" type="number" min="1" step="1" placeholder="e.g. 120" required />
+
+                <label for="taskPriority">Priority Level</label>
+                <select id="taskPriority">
+                  <option value="High">High</option>
+                  <option value="Medium" selected>Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">Add Task</button>
+                  <button type="button" id="clearTasks" class="btn btn-secondary">Clear All</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="task-list-wrapper">
+              <h4>Task Queue</h4>
+              <div id="taskList" class="task-list empty-state" aria-live="polite">
+                <p>No tasks available. Add a task to begin scheduling.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="processors" class="section card-section">
+          <div class="section-title">
+            <h3>Processor Configuration</h3>
+            <p>Control processors and compare lane load values</p>
+          </div>
+          <div class="card-content">
+            <div class="config-wrapper">
+              <div class="config-row">
+                <label for="processorCount">Processor Count</label>
+                <input id="processorCount" type="range" min="1" max="8" value="4" />
+                <span id="processorCountValue">4</span>
+              </div>
+              <div id="processorLanes" class="processor-lanes" aria-live="polite"></div>
+            </div>
+
+            <div class="status-grid">
+              <article class="status-card">
+                <span class="status-label">Active Lanes</span>
+                <div class="status-value" id="activeLanesCount">0</div>
+              </article>
+              <article class="status-card">
+                <span class="status-label">Idle Lanes</span>
+                <div class="status-value" id="idleLanesCount">0</div>
+              </article>
+              <article class="status-card">
+                <span class="status-label">Load Balance</span>
+                <div class="status-value" id="loadBalanceScore">0%</div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="simulation" class="section card-section">
+          <div class="section-title">
+            <h3>Simulation Controls</h3>
+            <p>Assign tasks, animate execution, and review performance</p>
+          </div>
+          <div class="card-content">
+            <div class="sim-controls">
+              <div class="control-buttons">
+                <button id="sampleData" class="btn btn-secondary" type="button">Load Sample Tasks</button>
+                <button id="assignTasks" class="btn btn-primary" type="button">Assign Tasks</button>
+                <button id="runSimulation" class="btn btn-success" type="button">Run Simulation</button>
+                <button id="resetSimulation" class="btn btn-secondary" type="button">Reset Timeline</button>
+                <button id="exportResults" class="btn btn-secondary" type="button">Export Results</button>
+              </div>
+              <div class="metrics-display">
+                <div class="metric">
+                  <span>Sequential Time</span>
+                  <strong id="simSequentialTime">0 ms</strong>
+                </div>
+                <div class="metric">
+                  <span>Parallel Time</span>
+                  <strong id="simParallelTime">0 ms</strong>
+                </div>
+                <div class="metric">
+                  <span>Efficiency</span>
+                  <strong id="simEfficiency">0%</strong>
+                </div>
+              </div>
+            </div>
+
+            <h4>Gantt Chart</h4>
+            <div id="ganttChart" class="gantt-chart empty-state" aria-live="polite">
+              <p>Assign tasks and run the simulation to generate the timeline view.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="analytics" class="section card-section">
+          <div class="section-title">
+            <h3>Analytics</h3>
+            <p>Task distribution, utilization, and execution comparisons</p>
+          </div>
+          <div class="card-content analytics-content">
+            <div class="chart-container">
+              <h4>Task Distribution</h4>
+              <canvas id="taskDistributionChart" height="220"></canvas>
+            </div>
+            <div class="chart-container">
+              <h4>Processor Utilization</h4>
+              <canvas id="utilizationChart" height="220"></canvas>
+            </div>
+            <div class="chart-container">
+              <h4>Execution Comparison</h4>
+              <canvas id="comparisonChart" height="220"></canvas>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section id="dashboard" class="section dashboard-overview">
+        <div class="section-title">
+          <h3>Dashboard Overview</h3>
+          <p>Monitor task progress, processor activity, and performance metrics</p>
+        </div>
+        <div class="dashboard-grid">
+          <article class="dashboard-card">
+            <div class="dashboard-icon">🧠</div>
+            <div>
+              <p class="dashboard-label">Total Tasks</p>
+              <div class="dashboard-value" id="cardTotalTasks">0</div>
+            </div>
+          </article>
+
+          <article class="dashboard-card">
+            <div class="dashboard-icon">🖥️</div>
+            <div>
+              <p class="dashboard-label">Processors</p>
+              <div class="dashboard-value" id="cardTotalProcessors">4</div>
+            </div>
+          </article>
+
+          <article class="dashboard-card">
+            <div class="dashboard-icon">⚡</div>
+            <div>
+              <p class="dashboard-label">Speedup</p>
+              <div class="dashboard-value" id="cardSpeedup">0.00x</div>
+            </div>
+          </article>
+
+          <article class="dashboard-card">
+            <div class="dashboard-icon">📊</div>
+            <div>
+              <p class="dashboard-label">Utilization</p>
+              <div class="dashboard-value" id="cardUtilization">0%</div>
+            </div>
+          </article>
+        </div>
+
+        <div class="summary-panel">
+          <span class="summary-label">Quick Simulation Summary</span>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <strong id="summarySequentialTime">0 ms</strong>
+              <span>Sequential Time</span>
+            </div>
+            <div class="summary-item">
+              <strong id="summaryParallelTime">0 ms</strong>
+              <span>Parallel Time</span>
+            </div>
+            <div class="summary-item">
+              <strong id="summaryEfficiency">0%</strong>
+              <span>Efficiency</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="education" class="section education-section">
+        <div class="section-title">
+          <h3>Educational Reference</h3>
+          <p>Study the principles that underpin parallel computing performance</p>
+        </div>
+        <div class="education-grid">
+          <article class="education-card">
+            <h4>What is Parallel Computing?</h4>
+            <p>Parallel computing is a branch of computer science that improves performance by dividing large workloads into smaller tasks that execute simultaneously across multiple processors. This technique is fundamental for modern high-performance systems.</p>
+          </article>
+          <article class="education-card">
+            <h4>Sequential vs Parallel Processing</h4>
+            <p>Sequential processing executes operations one by one on a single processor. Parallel processing executes independent operations concurrently across multiple processors, which can reduce total execution time in well-balanced schedules.</p>
+          </article>
+          <article class="education-card">
+            <h4>Speedup</h4>
+            <p>Speedup is the ratio of sequential execution time to parallel execution time. It quantifies the performance improvement achieved by distributing workloads across processors.</p>
+          </article>
+          <article class="education-card">
+            <h4>Efficiency</h4>
+            <p>Efficiency normalizes speedup by the number of processors and indicates how effectively resources are being used. Efficiency values closer to 100% denote strong utilization.</p>
+          </article>
+          <article class="education-card">
+            <h4>Processor Scheduling</h4>
+            <p>Processor scheduling assigns tasks to available processors to minimize idle time and reduce completion time. Good scheduling is key to maximizing parallel performance.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
