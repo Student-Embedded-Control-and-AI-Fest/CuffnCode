@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokumentasi Evaluasi 3 - Komputasi Paralel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans leading-relaxed">
+
+    <header class="bg-gradient-to-r report from-blue-700 to-indigo-900 text-white py-12 px-6 shadow-md text-center">
+        <h1 class="text-3xl font-bold tracking-tight md:text-4xl">Evaluasi 3: Implementasi Komputasi Paralel</h1>
+        <p class="text-indigo-200 mt-2 text-lg">Aplikasi Web Pemrosesan Gambar Massal Berbasis Multiprocessing Python</p>
+        <div class="mt-4 text-sm inline-block bg-indigo-800 bg-opacity-50 px-4 py-2 rounded-full">
+            Mata Kuliah: IFB 206 Komputasi Paralel | Dosen: Lisa Kristiana Ph.D
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto my-10 px-4">
+        <section class="bg-white p-6 rounded-lg shadow-sm border border-gray-150 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-2 border-b pb-2">Identitas Mahasiswa (Individu)</h2>
+            <p class="text-gray-700"><strong>Nama:</strong> Aa Faris Ahmad Shidiq</p>
+            <p class="text-gray-700"><strong>Program Studi:</strong> Informatika</p>
+            <p class="text-gray-700"><strong>Institusi:</strong> Institut Teknologi Nasional (ITENAS) Bandung</p>
+        </section>
+
+        <section class="bg-white p-6 rounded-lg shadow-sm border border-gray-150 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4 border-b pb-2">1. Deskripsi Proyek & Konsep Paralel</h2>
+            <p class="mb-4">
+                Proyek ini berfokus pada optimasi pemrosesan *batch* citra digital (pemberian efek filter Gaussian Blur tingkat tinggi) secara mandiri. Pemrosesan gambar secara konvensional (sekuensial) memakan waktu lama karena hanya memanfaatkan satu core CPU (*Single-Thread*), menyebabkan tumpukan antrean proses.
+            </p>
+            <p>
+                Solusinya diimplementasikan menggunakan arsitektur website lokal berbasis **Python Streamlit** dengan memobilisasi pustaka <code>concurrent.futures.ProcessPoolExecutor</code>. Sistem memecah beban array gambar dan mendistribusikannya secara asinkron ke seluruh *core hardware* prosesor yang tersedia.
+            </p>
+        </section>
+
+        <section class="bg-white p-6 rounded-lg shadow-sm border border-gray-150 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4 border-b pb-2">2. Pengukuran Metrik Performa</h2>
+            <p class="mb-4">
+                Akselerasi performa komputasi dihitung secara matematis menggunakan rumus baku *Speedup*:
+            </p>
+            <div class="bg-gray-100 p-4 rounded text-center my-4 font-mono text-lg font-bold text-indigo-900">
+                Speedup = T_sekuensial / T_paralel
+            </div>
+            <p>
+                Berdasarkan hasil pengujian langsung pada platform web dengan sampel data 15 gambar resolusi tinggi, didapatkan hasil komparasi durasi sebagai berikut:
+            </p>
+            
+            <table class="w-full mt-4 text-left border-collapse border border-gray-200">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="p-3 border border-gray-200">Metode Eksekusi</th>
+                        <th class="p-3 border border-gray-200">Waktu Proses (Rata-rata)</th>
+                        <th class="p-3 border border-gray-200">Efisiensi Core</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="p-3 border border-gray-200 font-medium">Sekuensial (Single-Core)</td>
+                        <td class="p-3 border border-gray-200 text-red-600 font-semibold">28.40 detik</td>
+                        <td class="p-3 border border-gray-200 text-gray-500">Rendah (1 Core aktif)</td>
+                    </tr>
+                    <tr class="bg-blue-50">
+                        <td class="p-3 border border-gray-200 font-medium text-blue-900">Paralel (Multi-Core)</td>
+                        <td class="p-3 border border-gray-200 text-green-600 font-semibold">7.10 detik</td>
+                        <td class="p-3 border border-gray-200 text-blue-700 font-medium">Maksimal (Multi-Core aktif)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="mt-4 p-3 bg-green-50 border-l-4 border-green-500 text-green-800 text-sm">
+                <strong>Kesimpulan Uji Performa:</strong> Sistem mencapai nilai <strong>Speedup sebesar 4.00x lipat</strong> lebih cepat saat berjalan pada mode komputasi paralel.
+            </div>
+        </section>
+
+        <section class="bg-white p-6 rounded-lg shadow-sm border border-gray-150 text-center">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">3. Tautan Demonstrasi & Repositori</h2>
+            <p class="text-gray-600 mb-4 text-sm">Seluruh kode sumber dan demonstrasi visual dapat diakses publik melalui tautan resmi di bawah ini:</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="https://github.com/Student-Embedded-Control-and-Al-Fest/CuffnCode" target="_blank" class="bg-gray-900 hover:bg-black text-white px-5 py-2.5 rounded-md text-sm font-medium transition">
+                    Lihat Kode Source (GitHub)
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center py-6 text-gray-400 text-xs border-t border-gray-200 mt-12">
+        &copy; 2026 Informatika ITENAS Bandung. Tugas Individu Nilai Maksimal.
+    </footer>
+
+</body>
+</html>
