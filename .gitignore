@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Generated outputs
+output/*
+!output/.gitkeep
+
+# Local files
+.DS_Store
