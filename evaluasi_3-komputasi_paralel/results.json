@@ -1,0 +1,145 @@
+{
+  "timestamp": "2026-06-05T15:38:24.532699",
+  "dataset": {
+    "name": "retail_data.csv",
+    "total_rows": 1000000,
+    "columns": [
+      "customer_id",
+      "age",
+      "gender",
+      "income_bracket",
+      "loyalty_program",
+      "membership_years",
+      "churned",
+      "marital_status",
+      "number_of_children",
+      "education_level",
+      "occupation",
+      "transaction_id",
+      "transaction_date",
+      "product_id",
+      "product_category",
+      "quantity",
+      "unit_price",
+      "discount_applied",
+      "payment_method",
+      "store_location",
+      "transaction_hour",
+      "day_of_week",
+      "week_of_year",
+      "month_of_year",
+      "avg_purchase_value",
+      "purchase_frequency",
+      "last_purchase_date",
+      "avg_discount_used",
+      "preferred_store",
+      "online_purchases",
+      "in_store_purchases",
+      "avg_items_per_transaction",
+      "avg_transaction_value",
+      "total_returned_items",
+      "total_returned_value",
+      "total_sales",
+      "total_transactions",
+      "total_items_purchased",
+      "total_discounts_received",
+      "avg_spent_per_category",
+      "max_single_purchase_value",
+      "min_single_purchase_value",
+      "product_name",
+      "product_brand",
+      "product_rating",
+      "product_review_count",
+      "product_stock",
+      "product_return_rate",
+      "product_size",
+      "product_weight",
+      "product_color",
+      "product_material",
+      "product_manufacture_date",
+      "product_expiry_date",
+      "product_shelf_life",
+      "promotion_id",
+      "promotion_type",
+      "promotion_start_date",
+      "promotion_end_date",
+      "promotion_effectiveness",
+      "promotion_channel",
+      "promotion_target_audience",
+      "customer_zip_code",
+      "customer_city",
+      "customer_state",
+      "store_zip_code",
+      "store_city",
+      "store_state",
+      "distance_to_store",
+      "holiday_season",
+      "season",
+      "weekend",
+      "customer_support_calls",
+      "email_subscriptions",
+      "app_usage",
+      "website_visits",
+      "social_media_engagement",
+      "days_since_last_purchase"
+    ],
+    "file_size_mb": 517.5
+  },
+  "config": {
+    "num_workers": 4,
+    "lb_strategy": "weighted"
+  },
+  "sisd": {
+    "total_time": 7.7176,
+    "num_workers": 1,
+    "total_revenue": 0.0,
+    "total_quantity": 0,
+    "valid_rows": 0,
+    "invalid_rows": 1000000
+  },
+  "mimd": {
+    "total_time": 0.8658,
+    "num_workers": 4,
+    "total_revenue": 0.0,
+    "total_quantity": 0,
+    "valid_rows": 0
+  },
+  "metrics": {
+    "speedup": 8.9137,
+    "efficiency": 222.84,
+    "load_balance_percentage": 100.0
+  },
+  "worker_distribution": {
+    "Worker-1": 250000,
+    "Worker-2": 250000,
+    "Worker-3": 250000,
+    "Worker-4": 250000
+  },
+  "revenue_result": {
+    "total_revenue": 0.0,
+    "total_quantity": 0,
+    "top_10_products": []
+  },
+  "worker_stats": {
+    "Worker-1": {
+      "rows_processed": 250000,
+      "valid_rows": 0,
+      "total_time": 0.6801
+    },
+    "Worker-2": {
+      "rows_processed": 250000,
+      "valid_rows": 0,
+      "total_time": 0.6964
+    },
+    "Worker-3": {
+      "rows_processed": 250000,
+      "valid_rows": 0,
+      "total_time": 0.7067
+    },
+    "Worker-4": {
+      "rows_processed": 250000,
+      "valid_rows": 0,
+      "total_time": 0.6685
+    }
+  }
+}
