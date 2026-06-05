@@ -16,6 +16,7 @@ else
 fi
 
 mkdir -p output/full_comparison_shards
+rm -f output/full_comparison_shards/shard_*.npz
 
 echo "=== Full Comparison: Serial vs Parallel vs Distributed/Shard ==="
 echo "Simulations: ${SIMULATIONS}"
