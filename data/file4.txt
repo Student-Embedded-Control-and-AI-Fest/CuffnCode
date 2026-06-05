@@ -1,0 +1,3 @@
+Computer science includes artificial intelligence.
+Machine learning uses large datasets.
+Parallel computing speeds up processing.
