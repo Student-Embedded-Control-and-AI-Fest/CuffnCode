@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parallel Job Scheduler — Retail Workload Benchmark</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    /* CSS Variables for Dark/Light Themes */
+    :root[data-theme="dark"] {
+      --bg-body: #020617;
+      --bg-surface: #0f172a;
+      --bg-card: #1e293b;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-hover: #0ea5e9;
+      --secondary: #10b981;
+      --secondary-hover: #059669;
+      --warning: #f59e0b;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      --input-bg: #0f172a;
+      --code-bg: #0b0f19;
+    }
+
+    :root[data-theme="light"] {
+      --bg-body: #f1f5f9;
+      --bg-surface: #ffffff;
+      --bg-card: #f8fafc;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --secondary: #059669;
+      --secondary-hover: #047857;
+      --warning: #d97706;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      --input-bg: #ffffff;
+      --code-bg: #f8fafc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Header & Navigation */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 2.5rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand svg {
+      width: 40px;
+      height: 40px;
+      color: var(--primary);
+    }
+
+    .brand-title {
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Theme Toggle Button */
+    .theme-toggle-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.6rem;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      box-shadow: var(--shadow);
+    }
+
+    .theme-toggle-btn:hover {
+      border-color: var(--primary);
+    }
+
+    /* Hero Section */
+    .hero {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+      margin-bottom: 3rem;
+      box-shadow: var(--card-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      flex: 1.5;
+    }
+
+    .hero-gfx {
+      flex: 0.5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero-gfx svg {
+      width: 150px;
+      height: 150px;
+      filter: drop-shadow(0 10px 20px rgba(56, 189, 248, 0.2));
+    }
+
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(16, 185, 129, 0.1));
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--primary);
+      padding: 0.4rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .hero-title {
+      font-size: 2.6rem;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .hero-desc {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Section Styles */
+    section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 0.5rem;
+      display: inline-block;
+    }
+
+    /* Grid Layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    /* Feature Cards */
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--primary);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-title {
+      font-size: 1.3rem;
+      color: var(--text-main);
+    }
+
+    .feature-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* Code Blocks */
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.25rem;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      margin-bottom: 1.5rem;
+    }
+
+    code {
+      font-family: 'Fira Code', monospace;
+      color: var(--secondary);
+    }
+
+    /* Simulator Panel */
+    .simulator-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: 1.5rem;
+    }
+
+    .sim-layout {
+      display: flex;
+      gap: 2.5rem;
+    }
+
+    .sim-inputs {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .sim-outputs {
+      flex: 1.2;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .form-group input, .form-group select {
+      background: var(--input-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.6rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+
+    .btn-run {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border: none;
+      color: white;
+      padding: 0.8rem;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: opacity 0.2s ease;
+    }
+
+    .btn-run:hover {
+      opacity: 0.9;
+    }
+
+    /* Result Metric Displays */
+    .metric-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    .metric-box {
+      border-left: 4px solid var(--primary);
+      padding: 0.5rem 1rem;
+    }
+
+    .metric-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .metric-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Load Visualizer Chart */
+    .load-visualizer {
+      margin-top: 1rem;
+    }
+
+    .load-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .bar-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.85rem;
+    }
+
+    .bar-label {
+      width: 80px;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .bar-outer {
+      flex-1: 1;
+      height: 16px;
+      background: var(--border-color);
+      border-radius: 9999px;
+      overflow: hidden;
+      flex-grow: 1;
+    }
+
+    .bar-inner {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 9999px;
+      width: 0%;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .bar-val {
+      width: 70px;
+      text-align: right;
+      font-family: 'Fira Code', monospace;
+    }
+
+    /* Alert styles */
+    .info-box {
+      border-left: 4px solid var(--primary);
+      background: rgba(56, 189, 248, 0.08);
+      padding: 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 1.5rem;
+    }
+
+    .info-box h4 {
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .hero {
+        flex-direction: column;
+        padding: 2rem;
+        text-align: center;
+      }
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+      .sim-layout {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Navigation Header -->
+    <header>
+      <div class="brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+          <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+          <line x1="6" y1="6" x2="6.01" y2="6"></line>
+          <line x1="6" y1="18" x2="6.01" y2="18"></line>
+        </svg>
+        <h1 class="brand-title">Parallel Job Scheduler</h1>
+      </div>
+      <button class="theme-toggle-btn" id="themeToggle" title="Toggle Dark/Light Mode">
+        <svg id="themeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="hero">
+      <div class="hero-content">
+        <span class="badge">SISD vs MIMD Benchmarking</span>
+        <h2 class="hero-title">Retail Workload Benchmark Platform</h2>
+        <p class="hero-desc">
+          Compare sequential transaction processing with multi-threaded parallel schedulers. Analyze scheduling efficiencies, load imbalances, and compute hardware speedups in real-time.
+        </p>
+      </div>
+      <div class="hero-gfx">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3z"></path>
+          <path d="M6 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3z"></path>
+          <path d="M9 6h6"></path>
+          <path d="M9 18h6"></path>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Core Concept & Architecture -->
+    <section>
+      <h2 class="section-title">Core Architecture</h2>
+      <div class="grid-2">
+        <div>
+          <p style="margin-bottom: 1rem;">
+            The benchmarking application distributes a large workload of retail records (`OnlineRetail.csv`) using a scheduler and measures the throughput across three key stages:
+          </p>
+          <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li><strong>SISD (Single Instruction Single Data):</strong> Runs a single-threaded sequential loop (`sisd.py`) to process the transactions.</li>
+            <li><strong>MIMD (Multiple Instruction Multiple Data):</strong> Disperses data chunks into multiple concurrent thread workers (`mimd.py`) utilizing Python's <code>ThreadPoolExecutor</code>.</li>
+            <li><strong>Load Balancing Strategy:</strong> Regulates how workloads are assigned via Equal, Round Robin, or Weighted strategies (`load_balancer.py`).</li>
+          </ul>
+          <div class="info-box">
+            <h4>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              Standard Library Implementation
+            </h4>
+            <p style="font-size: 0.9rem;">
+              The system relies entirely on standard Python modules (no external pip dependencies) to ensure high portability and pure algorithmic measurement.
+            </p>
+          </div>
+        </div>
+        
+        <div>
+          <h3 style="margin-bottom: 1rem; color: var(--primary);">System Scheduling Flow</h3>
+          <pre>
+[OnlineRetail.csv] (Dataset)
+      |
+      v
+[scheduler.py] (Orchestration)
+      |
+      +---> [load_balancer.py] 
+      |         |
+      |         +---> Equal Chunks
+      |         +---> Round Robin
+      |         +---> Weighted Limits
+      |
+      +---> [sisd.py] ---> Single Thread (Sequential)
+      +---> [mimd.py] ---> ThreadPoolExecutor (Parallel)
+      |
+      v
+[Output Validation] (Check equality) -> [JSON Results]
+          </pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Load Balancing Strategies -->
+    <section>
+      <h2 class="section-title">Load Balancing Strategies</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+        Load balancing dictates how transactions are split among processing threads. Our scheduler implements three models:
+      </p>
+      
+      <div class="grid-3">
+        <div class="feature-card">
+          <div class="feature-icon">⚖️</div>
+          <h4 class="feature-title">Equal Distribution</h4>
+          <p class="feature-desc">Splits the dataset into contiguous, identical block slices. Simple, but susceptible to load imbalance if records have varying processing times.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <h4 class="feature-title">Round Robin</h4>
+          <p class="feature-desc">Distributes lines one by one cyclically (e.g. Worker 0 takes line 0, Worker 1 takes line 1, and so on). Keeps record counts highly balanced.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">📈</div>
+          <h4 class="feature-title">Weighted Distribution</h4>
+          <p class="feature-desc">Assigns records based on custom worker performance weights, letting faster processor threads handle larger proportions of the workload.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Benchmark Simulator -->
+    <section>
+      <h2 class="section-title">Interactive Benchmark Simulator</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1rem;">
+        Test and simulate the scheduling results below. Set the number of threads, transaction size, and strategy to analyze execution speedups and thread load allocations.
+      </p>
+      
+      <div class="simulator-container">
+        <div class="sim-layout">
+          <div class="sim-inputs">
+            <div class="form-group">
+              <label for="numThreads">Number of Workers (Threads):</label>
+              <select id="numThreads" onchange="resetVisuals()">
+                <option value="2">2 Threads</option>
+                <option value="4" selected>4 Threads</option>
+                <option value="8">8 Threads</option>
+                <option value="12">12 Threads</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="recordsCount">Dataset Size (Transactions):</label>
+              <input type="number" id="recordsCount" value="15000" min="1000" max="100000" step="5000">
+            </div>
+            
+            <div class="form-group">
+              <label for="simStrategy">Load Balancer Strategy:</label>
+              <select id="simStrategy">
+                <option value="equal">Equal Chunks</option>
+                <option value="round_robin">Round Robin</option>
+                <option value="weighted">Weighted (4:2:1:1...)</option>
+              </select>
+            </div>
+            
+            <button class="btn-run" onclick="simulateBenchmark()">Run Benchmark Simulation</button>
+          </div>
+          
+          <div class="sim-outputs">
+            <div class="metric-row">
+              <div class="metric-box">
+                <div class="metric-label">SISD Time (s)</div>
+                <div class="metric-value" style="color: var(--text-main);" id="sisdTime">--</div>
+              </div>
+              <div class="metric-box" style="border-left-color: var(--secondary);">
+                <div class="metric-label">MIMD Time (s)</div>
+                <div class="metric-value" style="color: var(--secondary);" id="mimdTime">--</div>
+              </div>
+            </div>
+            
+            <div class="metric-row">
+              <div class="metric-box" style="border-left-color: var(--warning);">
+                <div class="metric-label">Speedup Factor</div>
+                <div class="metric-value" style="color: var(--warning);" id="speedupVal">--</div>
+              </div>
+              <div class="metric-box" style="border-left-color: #6366f1;">
+                <div class="metric-label">Efficiency</div>
+                <div class="metric-value" style="color: #6366f1;" id="efficiencyVal">--</div>
+              </div>
+            </div>
+            
+            <div class="load-visualizer">
+              <div class="load-title">Worker Thread Load Distribution:</div>
+              <div class="bar-container" id="barVisualizer">
+                <!-- Bar rows generated dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Run Guide -->
+    <section>
+      <h2 class="section-title">Developer &amp; Run Guide</h2>
+      <p style="margin-bottom: 1rem; color: var(--text-muted);">
+        Follow these commands to generate the workload dataset and execute the benchmark program:
+      </p>
+      
+      <h4 style="margin-bottom: 0.5rem; color: var(--primary);">1. Generate OnlineRetail.csv Mock Dataset</h4>
+      <pre>python generate_dataset.py</pre>
+      
+      <h4 style="margin-bottom: 0.5rem; color: var(--primary);">2. Run Benchmark with Equal Load Balancer</h4>
+      <pre>python main.py --workers 4 --strategy equal</pre>
+      
+      <h4 style="margin-bottom: 0.5rem; color: var(--primary);">3. Run Benchmark with Weighted Distribution</h4>
+      <pre>python main.py --workers 4 --strategy weighted --weights 4,2,1,1</pre>
+    </section>
+  </div>
+
+  <script>
+    // Theme toggler logic
+    const themeToggle = document.getElementById("themeToggle");
+    const htmlElement = document.documentElement;
+    const themeIcon = document.getElementById("themeIcon");
+
+    themeToggle.addEventListener("click", () => {
+      const currentTheme = htmlElement.getAttribute("data-theme");
+      const newTheme = currentTheme === "dark" ? "light" : "dark";
+      htmlElement.setAttribute("data-theme", newTheme);
+      
+      if (newTheme === "light") {
+        themeIcon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+      } else {
+        themeIcon.innerHTML = `
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        `;
+      }
+    });
+
+    // Reset visualization
+    function resetVisuals() {
+      const barContainer = document.getElementById("barVisualizer");
+      barContainer.innerHTML = "";
+      document.getElementById("sisdTime").innerText = "--";
+      document.getElementById("mimdTime").innerText = "--";
+      document.getElementById("speedupVal").innerText = "--";
+      document.getElementById("efficiencyVal").innerText = "--";
+    }
+
+    // Benchmark Simulator logic
+    function simulateBenchmark() {
+      const numWorkers = parseInt(document.getElementById("numThreads").value);
+      const recordsCount = parseInt(document.getElementById("recordsCount").value) || 15000;
+      const strategy = document.getElementById("simStrategy").value;
+      
+      // Calculate transaction processing time (sequential baseline)
+      // Assume 1 transaction takes 0.015 milliseconds to parse and aggregate
+      const timePerTx = 0.000015; 
+      const sisdTimeSec = recordsCount * timePerTx;
+      
+      // Distribute records to workers
+      let workerLoads = [];
+      if (strategy === "equal" || strategy === "round_robin") {
+        const avg = Math.floor(recordsCount / numWorkers);
+        for (let i = 0; i < numWorkers; i++) {
+          workerLoads.push(avg);
+        }
+        // Add remainder to last worker for equal, round_robin distributes it
+        workerLoads[numWorkers - 1] += (recordsCount % numWorkers);
+      } else if (strategy === "weighted") {
+        // Assume weights like [4, 2, 1, 1...] depending on threads
+        let baseWeights = [4, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+        let weights = baseWeights.slice(0, numWorkers);
+        let totalWeight = weights.reduce((a, b) => a + b, 0);
+        
+        let sumLoads = 0;
+        for (let i = 0; i < numWorkers - 1; i++) {
+          let allocated = Math.floor((weights[i] / totalWeight) * recordsCount);
+          workerLoads.push(allocated);
+          sumLoads += allocated;
+        }
+        workerLoads.push(recordsCount - sumLoads);
+      }
+      
+      // Simulate MIMD execution time
+      // Threads run concurrently, so parallel time is governed by the slowest thread
+      // Plus some multi-threading overhead (Amdahl's law / thread context switching costs)
+      const maxLoad = Math.max(...workerLoads);
+      const threadOverhead = 0.015 + (numWorkers * 0.003); // constant startup cost + thread scale cost
+      const mimdTimeSec = (maxLoad * timePerTx) + threadOverhead;
+      
+      // Calculate speedup and efficiency
+      const speedup = sisdTimeSec / mimdTimeSec;
+      const efficiency = speedup / numWorkers;
+      
+      // Display metrics
+      document.getElementById("sisdTime").innerText = sisdTimeSec.toFixed(4) + " s";
+      document.getElementById("mimdTime").innerText = mimdTimeSec.toFixed(4) + " s";
+      document.getElementById("speedupVal").innerText = speedup.toFixed(2) + "x";
+      document.getElementById("efficiencyVal").innerText = (efficiency * 100).toFixed(1) + "%";
+      
+      // Render bar chart
+      const barContainer = document.getElementById("barVisualizer");
+      barContainer.innerHTML = "";
+      
+      for (let i = 0; i < numWorkers; i++) {
+        const percentage = (workerLoads[i] / recordsCount) * 100;
+        const widthVal = (workerLoads[i] / Math.max(...workerLoads)) * 100;
+        
+        const row = document.createElement("div");
+        row.className = "bar-row";
+        row.innerHTML = `
+          <div class="bar-label">Worker ${i}</div>
+          <div class="bar-outer">
+            <div class="bar-inner" style="width: 0%"></div>
+          </div>
+          <div class="bar-val">${workerLoads[i]} tx</div>
+        `;
+        barContainer.appendChild(row);
+        
+        // Trigger width animation
+        setTimeout(() => {
+          row.querySelector(".bar-inner").style.width = widthVal + "%";
+        }, 50);
+      }
+    }
+
+    // Initialize visualizer on load
+    window.onload = function() {
+      resetVisuals();
+    };
+  </script>
+</body>
+</html>

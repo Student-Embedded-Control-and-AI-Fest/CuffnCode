@@ -1,0 +1,82 @@
+{
+    "timestamp": "2026-06-05 20:23:04",
+    "configuration": {
+        "dataset": "OnlineRetail.csv",
+        "records_count": 15000,
+        "num_workers": 4,
+        "strategy": "round_robin",
+        "weights": null
+    },
+    "performance": {
+        "sequential_time_sec": 0.1782,
+        "parallel_time_sec": 0.1211,
+        "speedup": 1.47,
+        "efficiency": 0.37
+    },
+    "verification": {
+        "is_valid": true,
+        "message": "Outputs match perfectly."
+    },
+    "load_balancing": {
+        "distribution_counts": [
+            3750,
+            3750,
+            3750,
+            3750
+        ],
+        "worker_durations_sec": {
+            "0": 0.0609,
+            "1": 0.0345,
+            "2": 0.0347,
+            "3": 0.0344
+        },
+        "max_deviation_percent": 0.0
+    },
+    "results": {
+        "total_revenue": 3964017.17,
+        "total_quantity": 903038,
+        "processed_count": 14906,
+        "top_10_products": {
+            "POST": {
+                "description": "POSTAGE",
+                "revenue": 1043414.5
+            },
+            "22423": {
+                "description": "REGENCY CAKESTAND 3 TIER",
+                "revenue": 838919.4
+            },
+            "22720": {
+                "description": "SET OF 3 CAKE TINS PANTRY DESIGN",
+                "revenue": 303105.75
+            },
+            "47566": {
+                "description": "PARTY BUNTING",
+                "revenue": 300489.01
+            },
+            "84997D": {
+                "description": "CHILDRENS CUTLERY POLKADOT PINK",
+                "revenue": 244317.16
+            },
+            "22960": {
+                "description": "JAM MAKING SET WITH JARS",
+                "revenue": 203139.13
+            },
+            "22086": {
+                "description": "PAPER CHAIN KIT 50'S CHRISTMAS",
+                "revenue": 170116.8
+            },
+            "85123A": {
+                "description": "WHITE HANGING HEART T-LIGHT HOLDER",
+                "revenue": 159427.77
+            },
+            "85099B": {
+                "description": "JUMBO BAG RED RETROSPOT",
+                "revenue": 115192.86
+            },
+            "22386": {
+                "description": "JUMBO BAG PINK POLKADOT",
+                "revenue": 111274.97
+            }
+        }
+    }
+}

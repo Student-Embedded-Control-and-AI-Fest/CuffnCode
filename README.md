@@ -1,73 +1,88 @@
-<p align="center">
-  <img src="./images/cuffncode.png" width="200">
-</p>
+# Parallel Job Scheduler
 
-<h4 align="center">This project is funded by IFAC Activity Fund (July 2025 to June 2026)</h4>
+## Overview
 
-__CuffnCode__ is a retrofitted blood pressure measurement system for teaching and research. In the long term, it aims to become an overinstrumented platform for developing and testing signal processing and control algorithms.
+Parallel Job Scheduler adalah aplikasi berbasis web dan CLI yang dikembangkan untuk mengimplementasikan dan menganalisis konsep Komputasi Paralel pada penjadwalan pemrosesan data log transaksi retail.
 
-## Retrofitted pump system
+Aplikasi ini membandingkan dua metode pemrosesan data:
 
-<img src="./images/complete_device.png" width="600"> 
+* Sequential Processing (SISD - Single Instruction Single Data)
+* Parallel Processing (MIMD - Multiple Instruction Multiple Data)
 
-## Analog Front End Design
-A reproducible, low-noise analog front end for millivolt bridge sensors (e.g., MPS20N0040D, typically used for __hobbyist__ sphygmomanometer), using AD620 instrumentation amplifier and TLC2272 level shift. This analog front end should also work for other millivolt instruments.
+Sistem dibangun menggunakan murni Python 3 dengan modul standard library `threading` untuk backend pemrosesan data, serta Vanilla HTML5, Vanilla CSS3, dan Vanilla JavaScript untuk antarmuka simulator web interaktif.
 
+---
 
-### TINA-TI
+## Background
 
-AC simulation with TINA-TI:
+Pemrosesan log transaksi retail berskala besar (seperti `OnlineRetail.csv`) membutuhkan komputasi agregasi yang intensif untuk menghasilkan metrik total pendapatan, kuantitas barang, dan klasifikasi produk terlaris. Pada sistem sekuensial (single-threaded), pemrosesan ini berjalan lambat karena hanya memanfaatkan satu core processor saja.
 
-<img src="./images/AFE.png" width="600"> 
+Untuk mengatasi bottleneck tersebut, diperlukan pendekatan komputasi paralel menggunakan pembagian kerja (load balancing) ke beberapa thread worker agar proses parsing data dapat berjalan secara konkuren, efisien, dan memanfaatkan seluruh core processor modern secara optimal.
 
-<img src="./images/tina-ac-diag.jpg" width="500"> 
+---
 
-Instrumentation amplifier gain:
+## Objectives
 
-$$ G = 1 + \frac{49.4\text{k}\Omega}{R_g} = 1 + \frac{49.4\text{k}\Omega}{470} \approx 105$$
+Tujuan utama project ini adalah:
 
-TLC2272 offset:
+* Mengimplementasikan konsep komputasi paralel menggunakan Threading pada Python tanpa dependensi eksternal.
+* Membandingkan performa antara Sequential Processing (SISD) dan Parallel Processing (MIMD).
+* Mengukur execution time, speedup, efisiensi (efficiency), dan load balance deviation.
+* Menganalisis perbedaan performa 3 strategi pembagian beban kerja (*Equal*, *Round Robin*, dan *Weighted*).
+* Menjamin keaslian data output antara pemrosesan paralel dan sekuensial melalui sistem verifikasi otomatis.
+* Menyediakan simulator web interaktif yang memvisualisasikan load balancing antar thread secara real-time.
 
-$$ \frac{56 \text{k}}{47\text{k} + 56 \text{k}} \times 3.3 V \approx 1.5 V$$
+---
 
+## Dashboard Preview
 
+Berikut merupakan tampilan utama aplikasi Parallel Job Scheduler.
 
-### MPS20N0040D
-The MPS20N0040D is a millivolt-level bridge (≈50–100 mV full-scale; 4–6 kΩ)
+Fitur utama yang tersedia pada dashboard:
 
-| <img src="./images/mps20n0040d_1.png" width="300"> | <img src="./images/mps20n0040d_2.png" width="300"> |
-| ----------------------------------------- | ----------------------------------------- |
+* Pengaturan jumlah thread worker
+* Pengaturan ukuran dataset transaksi (Load volume)
+* Pemilihan strategi Load Balancer (*Equal Chunks*, *Round Robin*, atau *Weighted*)
+* Analisis performa real-time (Speedup dan Efficiency)
+* Visualisasi distribusi beban kerja masing-masing thread worker secara dinamis
 
-### TLC2272 (Dual, Low-Noise, Rail-To-Rail Operational Amplifier)
-This will be used to offset the instrumentation amplifier, giving headroom for possible undershoot or for signal that goes both ways (positive and negative).
+![Dashboard Preview](docs/Dashboard.png)
 
-<img src="./images/tlc2272.png" width="300"> 
+---
 
-### AD620
-This is the instrumentation amplifier that is relatively cheap and widely available in Indonesian market.
+## Features
 
-| <img src="./images/ad620_1.png" width="150"> | <img src="./images/ad620_2.png" width="150"> |
-| ----------------------------------------- | ----------------------------------------- |
+### Command Line Interface (CLI)
 
-## Digital Controller
-We will use STM32F411CE (the black pill) as our digital processor.
+Aplikasi dapat dijalankan melalui terminal dengan berbagai opsi parameter konfigurasi.
 
-| <img src="./images/prototype1.png" width="250"> | <img src="./images/prototype2.png" width="330"> |
-| ----------------------------------------- | ----------------------------------------- |
+Opsi Command Line Arguments yang didukung:
+* `--workers` / `-w`: Menentukan jumlah worker thread paralel (default: 4).
+* `--strategy` / `-s`: Memilih metode load balancing (`equal`, `round_robin`, atau `weighted`).
+* `--weights` / `-wt`: Memberikan rasio kapasitas kerja untuk strategi weighted (misalnya: `4,2,1,1`).
+* `--dataset` / `-d`: Menentukan lokasi file dataset log (default: `OnlineRetail.csv`).
 
-## Safety & Notes
+### Load Balancing Strategies
 
-- The MPS20N0040D is fragile—avoid over-pressure.
-- If powering from USB, beware ground noise from the host PC. A ferrite on the USB cable can help.
+Sistem mengimplementasikan tiga metode distribusi beban data:
 
-## Next-to-Do
-- 50/60 Hz notch filter (hum killer).
-- PCB layouting.
-- Performance evaluations.
+* **Equal Chunks**: Membagi baris transaksi secara merata menjadi potongan-potongan berurutan.
+* **Round Robin**: Mendistribusikan baris transaksi secara bergantian satu per satu ke setiap thread secara melingkar (cyclical).
+* **Weighted Distribution**: Mendistribusikan porsi beban kerja sesuai rasio bobot spesifik yang diberikan kepada masing-masing thread.
 
-## Credits
+### Verification Guarantee
 
-- Instrumentation amplifier intro: https://www.youtube.com/watch?v=O0-iczIq1aU
-- INA333 review with AD620 suggestion: https://blog.robertelder.org/cjmcu-333-ina-333-instrumentation-amplifier/
-- A Designer’s Guide to Instrumentation Amplifiers (3rd Edition) https://www.analog.com/media/en/training-seminars/design-handbooks/designers-guide-instrument-amps-complete.pdf
+Setelah pemrosesan selesai, sistem otomatis melakukan deep comparison antara hasil SISD dan MIMD untuk memastikan data total revenue, quantity, country revenue, dan top 10 products memiliki kecocokan 100% tanpa adanya race condition.
 
+---
+
+## Technologies Used
+
+### Backend Engine
+* Python 3 (standard libraries: `threading`, `json`, `argparse`, `time`, `datetime`)
+
+### Frontend Web (GitHub Pages)
+* HTML5 (Structure & Semantics)
+* CSS3 (Styling & Theme Variables)
+* JavaScript (Interactive Simulator & CSS Animations)
+* Google Fonts (Typography: Inter, Outfit, Fira Code)
