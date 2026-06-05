@@ -1,0 +1,123 @@
+{
+  "timestamp": "2026-06-04T22:45:20.613407",
+  "dataset": {
+    "name": "OnlineRetail.csv",
+    "total_rows": 541909,
+    "columns": [
+      "InvoiceNo",
+      "StockCode",
+      "Description",
+      "Quantity",
+      "InvoiceDate",
+      "UnitPrice",
+      "CustomerID",
+      "Country"
+    ],
+    "file_size_mb": 43.47
+  },
+  "config": {
+    "num_workers": 4,
+    "lb_strategy": "equal"
+  },
+  "sisd": {
+    "total_time": 10.4121,
+    "num_workers": 1,
+    "total_revenue": 10666684.54,
+    "total_quantity": 5588376,
+    "valid_rows": 530104,
+    "invalid_rows": 11805
+  },
+  "mimd": {
+    "total_time": 3.9602,
+    "num_workers": 4,
+    "total_revenue": 10666684.54,
+    "total_quantity": 5588376,
+    "valid_rows": 530104
+  },
+  "metrics": {
+    "speedup": 2.6292,
+    "efficiency": 65.73,
+    "load_balance_percentage": 100.0
+  },
+  "worker_distribution": {
+    "Worker-1": 135478,
+    "Worker-2": 135477,
+    "Worker-3": 135477,
+    "Worker-4": 135477
+  },
+  "revenue_result": {
+    "total_revenue": 10666684.54,
+    "total_quantity": 5588376,
+    "top_5_countries": {
+      "United Kingdom": 9025222.08,
+      "Netherlands": 285446.34,
+      "EIRE": 283453.96,
+      "Germany": 228867.14,
+      "France": 209715.11
+    },
+    "top_10_products": [
+      {
+        "product": "DOTCOM POSTAGE",
+        "revenue": 206248.77
+      },
+      {
+        "product": "REGENCY CAKESTAND 3 TIER",
+        "revenue": 174484.74
+      },
+      {
+        "product": "PAPER CRAFT , LITTLE BIRDIE",
+        "revenue": 168469.6
+      },
+      {
+        "product": "WHITE HANGING HEART T-LIGHT HOLDER",
+        "revenue": 106292.77
+      },
+      {
+        "product": "PARTY BUNTING",
+        "revenue": 99504.33
+      },
+      {
+        "product": "JUMBO BAG RED RETROSPOT",
+        "revenue": 94340.05
+      },
+      {
+        "product": "MEDIUM CERAMIC TOP STORAGE JAR",
+        "revenue": 81700.92
+      },
+      {
+        "product": "Manual",
+        "revenue": 78112.82
+      },
+      {
+        "product": "POSTAGE",
+        "revenue": 78101.88
+      },
+      {
+        "product": "RABBIT NIGHT LIGHT",
+        "revenue": 66964.99
+      }
+    ]
+  },
+  "worker_stats": {
+    "Worker-1": {
+      "rows_processed": 135478,
+      "valid_rows": 132322,
+      "total_time": 3.661
+    },
+    "Worker-4": {
+      "rows_processed": 135477,
+      "valid_rows": 133274,
+      "total_time": 3.8524
+    },
+    "Worker-3": {
+      "rows_processed": 135477,
+      "valid_rows": 132409,
+      "total_time": 3.8995
+    },
+    "Worker-2": {
+      "rows_processed": 135477,
+      "valid_rows": 132099,
+      "total_time": 3.9162
+    }
+  }
+}

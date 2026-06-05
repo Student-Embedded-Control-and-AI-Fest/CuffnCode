@@ -1,0 +1,17 @@
+# Requirements for Parallel Job Scheduler Simulator
+# Project ini hanya menggunakan Python Standard Library
+# Tidak memerlukan library eksternal
+
+# Standard Library yang digunakan:
+# - threading     → Multithreading untuk MIMD
+# - time          → Pengukuran waktu eksekusi
+# - json          → Menyimpan hasil ke file JSON
+# - random        → Membuat durasi task acak
+# - argparse      → Parsing command-line arguments
+# - statistics    → Perhitungan statistik (mean, stdev)
+# - os            → File path operations
+# - sys           → System operations
+# - datetime      → Timestamp
+
+# Tidak ada dependency eksternal yang diperlukan.
+# Cukup jalankan: python src/main.py
