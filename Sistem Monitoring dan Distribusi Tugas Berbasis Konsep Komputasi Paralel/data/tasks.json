@@ -1,0 +1,29 @@
+[
+    {
+        "id": 1,
+        "name": "tugas 1",
+        "category": "Kerja",
+        "priority": "High",
+        "estimate": "10",
+        "status": "Done",
+        "worker": 0
+    },
+    {
+        "id": 2,
+        "name": "tugas 2",
+        "category": "Rumah",
+        "priority": "Medium",
+        "estimate": "5",
+        "status": "Running",
+        "worker": 1
+    },
+    {
+        "id": 3,
+        "name": "tugas 3",
+        "category": "Belanja",
+        "priority": "Low",
+        "estimate": "2",
+        "status": "Done",
+        "worker": 0
+    }
+]
