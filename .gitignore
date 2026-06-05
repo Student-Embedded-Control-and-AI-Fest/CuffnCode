@@ -22,3 +22,6 @@ Thumbs.db
 __pycache__/
 *.pyc
 buat_laporan.py
+
+# Source PDF (not tracked - renamed copy tracked instead)
+E3_Kompar_*.pdf
