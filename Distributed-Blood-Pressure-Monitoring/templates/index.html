@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PulseCare Monitoring Dashboard</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+</head>
+
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">+</div>
+
+                <div>
+                    <h2>PulseCare</h2>
+                    <p>Clinical Monitoring</p>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active">
+                    <span class="nav-icon">⌂</span>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="#records" class="nav-item">
+                    <span class="nav-icon">▦</span>
+                    <span>Patient Records</span>
+                </a>
+
+                <a href="#system" class="nav-item">
+                    <span class="nav-icon">◉</span>
+                    <span>System Status</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <p>CuffnCode Simulation</p>
+                <span>Distributed System</span>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">Healthcare Monitoring System</p>
+
+                    <h1>Blood Pressure Dashboard</h1>
+
+                    <p class="subtitle">
+                        Distributed monitoring and parallel data processing
+                        for clinical blood pressure simulation.
+                    </p>
+                </div>
+
+                <a href="{{ url_for('generate_data') }}" class="generate-button">
+                    <span class="button-icon">+</span>
+                    Generate 10 Records
+                </a>
+            </header>
+
+            <section class="overview-grid">
+                <div class="summary-card total-card">
+                    <div class="card-top">
+                        <div>
+                            <p class="card-label">Total Records</p>
+                            <h2>{{ total_records }}</h2>
+                        </div>
+
+                        <div class="card-icon">▦</div>
+                    </div>
+
+                    <p class="card-caption">
+                        Total sensor readings stored
+                    </p>
+                </div>
+
+                <div class="summary-card normal-card">
+                    <div class="card-top">
+                        <div>
+                            <p class="card-label">Normal Pressure</p>
+                            <h2>{{ normal_pressure_count }}</h2>
+                        </div>
+
+                        <div class="card-icon">✓</div>
+                    </div>
+
+                    <p class="card-caption">
+                        Stable clinical readings
+                    </p>
+                </div>
+
+                <div class="summary-card high-card">
+                    <div class="card-top">
+                        <div>
+                            <p class="card-label">High Pressure</p>
+                            <h2>{{ high_pressure_count }}</h2>
+                        </div>
+
+                        <div class="card-icon">!</div>
+                    </div>
+
+                    <p class="card-caption">
+                        Requires further observation
+                    </p>
+                </div>
+
+                <div class="summary-card low-card">
+                    <div class="card-top">
+                        <div>
+                            <p class="card-label">Low Pressure</p>
+                            <h2>{{ low_pressure_count }}</h2>
+                        </div>
+
+                        <div class="card-icon">↓</div>
+                    </div>
+
+                    <p class="card-caption">
+                        Below normal blood pressure
+                    </p>
+                </div>
+            </section>
+
+            <section class="status-grid" id="system">
+                <div class="status-card">
+                    <div class="status-dot active"></div>
+
+                    <div>
+                        <p class="status-title">Sensor Node</p>
+                        <span>Dummy sensor generator active</span>
+                    </div>
+                </div>
+
+                <div class="status-card">
+                    <div class="status-dot active"></div>
+
+                    <div>
+                        <p class="status-title">Processing Workers</p>
+                        <span>Parallel multiprocessing ready</span>
+                    </div>
+                </div>
+
+                <div class="status-card">
+                    <div class="status-dot active"></div>
+
+                    <div>
+                        <p class="status-title">Storage Node</p>
+                        <span>CSV storage connected</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="records-panel" id="records">
+                <div class="panel-header">
+                    <div>
+                        <p class="eyebrow">Clinical Records</p>
+                        <h2>Blood Pressure Monitoring Records</h2>
+                        <p>
+                            Latest sensor readings processed through
+                            distributed monitoring simulation.
+                        </p>
+                    </div>
+
+                    <div class="live-badge">
+                        <span class="live-dot"></span>
+                        Live Simulation
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Systolic</th>
+                                <th>Diastolic</th>
+                                <th>Heart Rate</th>
+                                <th>Blood Pressure Status</th>
+                                <th>Heart Rate Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for record in records | reverse %}
+                            <tr>
+                                <td>
+                                    <span class="timestamp">
+                                        {{ record.timestamp }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <strong>{{ record.systolic }}</strong>
+                                    <span class="unit"> mmHg</span>
+                                </td>
+
+                                <td>
+                                    <strong>{{ record.diastolic }}</strong>
+                                    <span class="unit"> mmHg</span>
+                                </td>
+
+                                <td>
+                                    <strong>{{ record.heart_rate }}</strong>
+                                    <span class="unit"> BPM</span>
+                                </td>
+
+                                <td>
+                                    {% if record.blood_pressure_status == "High Blood Pressure" %}
+                                        <span class="badge badge-high">
+                                            <span class="badge-dot"></span>
+                                            {{ record.blood_pressure_status }}
+                                        </span>
+                                    {% elif record.blood_pressure_status == "Low Blood Pressure" %}
+                                        <span class="badge badge-low">
+                                            <span class="badge-dot"></span>
+                                            {{ record.blood_pressure_status }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge badge-normal">
+                                            <span class="badge-dot"></span>
+                                            {{ record.blood_pressure_status }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if record.heart_rate_status == "High Heart Rate" %}
+                                        <span class="heart-status heart-high">
+                                            {{ record.heart_rate_status }}
+                                        </span>
+                                    {% elif record.heart_rate_status == "Low Heart Rate" %}
+                                        <span class="heart-status heart-low">
+                                            {{ record.heart_rate_status }}
+                                        </span>
+                                    {% else %}
+                                        <span class="heart-status heart-normal">
+                                            {{ record.heart_rate_status }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="empty-state">
+                                    <div class="empty-icon">+</div>
+
+                                    <h3>No sensor data available</h3>
+
+                                    <p>
+                                        Click the generate button to start
+                                        the blood pressure monitoring simulation.
+                                    </p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <footer class="footer">
+                <p>
+                    PulseCare Clinical Monitoring Dashboard ·
+                    CuffnCode Distributed Blood Pressure Simulation
+                </p>
+            </footer>
+        </main>
+    </div>
+</body>
+</html>
